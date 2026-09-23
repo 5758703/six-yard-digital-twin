@@ -2,6 +2,13 @@
 
 Vue 3 + TypeScript + Three.js 的可交互三维园区项目，配套可复现的 Blender 模型、Cycles 展示渲染和动画场景。位置范围依据用户提供的涿州平安小区六号院截图；国际部大楼、装备专业化大楼依据第二张标注图定位。
 
+<img width="1920" height="910" alt="35f3da7284e224bd014f1f14348786c1" src="https://github.com/user-attachments/assets/5e6e668e-4b12-4c44-bfac-f28e8ac45283" />
+
+<img width="1920" height="910" alt="d602b3c66f22ddb1ce1e46a9ca887381" src="https://github.com/user-attachments/assets/23ef3a79-c17a-4796-a0f3-d9b3612472dc" />
+
+<img width="1920" height="910" alt="135455e39f5ab57911dcf9304c5f876e" src="https://github.com/user-attachments/assets/3b2eb053-eb1d-44cd-bf9f-692efc2e06f7" />
+
+
 ## 本地运行
 
 需要 Node.js 22.12+（本项目使用 Node 24 验证）。
