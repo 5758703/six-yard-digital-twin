@@ -1,0 +1,628 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - link "六号院数字孪生首页" [ref=e5] [cursor=pointer]:
+      - /url: /
+      - img [ref=e7]
+      - generic [ref=e10]:
+        - strong [ref=e11]: 六号院 / 数字孪生
+        - generic [ref=e12]: 河北 · 涿州 · 平安小区
+    - navigation "主导航" [ref=e13]:
+      - button "场景总览" [ref=e14] [cursor=pointer]:
+        - img [ref=e15]
+        - text: 场景总览
+      - button "交通运行" [ref=e18] [cursor=pointer]:
+        - img [ref=e19]
+        - text: 交通运行
+      - button "事件中心 2" [ref=e23] [cursor=pointer]:
+        - img [ref=e24]
+        - text: 事件中心
+        - generic [ref=e30]: "2"
+    - generic [ref=e31]:
+      - generic [ref=e32]:
+        - text: 09:03:19
+        - generic [ref=e33]: 2026 / 09 / 20
+      - button "查看数据来源" [ref=e34] [cursor=pointer]:
+        - img [ref=e35]
+  - main [ref=e37]:
+    - complementary [ref=e38]:
+      - generic [ref=e39]:
+        - generic [ref=e40]:
+          - img [ref=e41]
+          - text: 园区资产
+        - button "收起资产面板" [ref=e45] [cursor=pointer]:
+          - img [ref=e46]
+      - generic [ref=e49]:
+        - img [ref=e50]
+        - textbox "搜索楼宇" [ref=e53]:
+          - /placeholder: 搜索楼宇名称 / 编号
+      - generic [ref=e54]:
+        - button "全部" [ref=e55] [cursor=pointer]
+        - button "办公" [ref=e56] [cursor=pointer]
+        - button "住宅" [ref=e57] [cursor=pointer]
+        - button "配套" [ref=e58] [cursor=pointer]
+        - button "厂房" [ref=e59] [cursor=pointer]
+      - generic [ref=e60]:
+        - generic [ref=e61]: 建筑列表
+        - generic [ref=e62]: 66 栋
+      - generic [ref=e63]:
+        - button "国际部大楼 办公建筑 · 20 层（已确认）" [ref=e64] [cursor=pointer]:
+          - img [ref=e66]
+          - generic [ref=e70]:
+            - strong [ref=e71]: 国际部大楼
+            - generic [ref=e72]: 办公建筑 · 20 层（已确认）
+          - img [ref=e73]
+        - button "装备专业化大楼 办公建筑 · 6 层（已确认）" [ref=e75] [cursor=pointer]:
+          - img [ref=e77]
+          - generic [ref=e81]:
+            - strong [ref=e82]: 装备专业化大楼
+            - generic [ref=e83]: 办公建筑 · 6 层（已确认）
+          - img [ref=e84]
+        - button "北侧办公楼 办公建筑 · 5 层（估）" [ref=e86] [cursor=pointer]:
+          - img [ref=e88]
+          - generic [ref=e92]:
+            - strong [ref=e93]: 北侧办公楼
+            - generic [ref=e94]: 办公建筑 · 5 层（估）
+          - img [ref=e95]
+        - button "住宅楼 01 住宅建筑 · 6 层（估）" [ref=e97] [cursor=pointer]:
+          - img [ref=e99]
+          - generic [ref=e103]:
+            - strong [ref=e104]: 住宅楼 01
+            - generic [ref=e105]: 住宅建筑 · 6 层（估）
+          - img [ref=e106]
+        - button "住宅楼 02 住宅建筑 · 6 层（估）" [ref=e108] [cursor=pointer]:
+          - img [ref=e110]
+          - generic [ref=e114]:
+            - strong [ref=e115]: 住宅楼 02
+            - generic [ref=e116]: 住宅建筑 · 6 层（估）
+          - img [ref=e117]
+        - button "住宅楼 03 住宅建筑 · 6 层（估）" [ref=e119] [cursor=pointer]:
+          - img [ref=e121]
+          - generic [ref=e125]:
+            - strong [ref=e126]: 住宅楼 03
+            - generic [ref=e127]: 住宅建筑 · 6 层（估）
+          - img [ref=e128]
+        - button "配套建筑 01 配套建筑 · 3 层（估）" [ref=e130] [cursor=pointer]:
+          - img [ref=e132]
+          - generic [ref=e136]:
+            - strong [ref=e137]: 配套建筑 01
+            - generic [ref=e138]: 配套建筑 · 3 层（估）
+          - img [ref=e139]
+        - button "配套建筑 02 配套建筑 · 3 层（估）" [ref=e141] [cursor=pointer]:
+          - img [ref=e143]
+          - generic [ref=e147]:
+            - strong [ref=e148]: 配套建筑 02
+            - generic [ref=e149]: 配套建筑 · 3 层（估）
+          - img [ref=e150]
+        - button "住宅楼 04 住宅建筑 · 6 层（估）" [ref=e152] [cursor=pointer]:
+          - img [ref=e154]
+          - generic [ref=e158]:
+            - strong [ref=e159]: 住宅楼 04
+            - generic [ref=e160]: 住宅建筑 · 6 层（估）
+          - img [ref=e161]
+        - button "住宅楼 05 住宅建筑 · 6 层（估）" [ref=e163] [cursor=pointer]:
+          - img [ref=e165]
+          - generic [ref=e169]:
+            - strong [ref=e170]: 住宅楼 05
+            - generic [ref=e171]: 住宅建筑 · 6 层（估）
+          - img [ref=e172]
+        - button "住宅楼 06 住宅建筑 · 6 层（估）" [ref=e174] [cursor=pointer]:
+          - img [ref=e176]
+          - generic [ref=e180]:
+            - strong [ref=e181]: 住宅楼 06
+            - generic [ref=e182]: 住宅建筑 · 6 层（估）
+          - img [ref=e183]
+        - button "住宅楼 07 住宅建筑 · 6 层（估）" [ref=e185] [cursor=pointer]:
+          - img [ref=e187]
+          - generic [ref=e191]:
+            - strong [ref=e192]: 住宅楼 07
+            - generic [ref=e193]: 住宅建筑 · 6 层（估）
+          - img [ref=e194]
+        - button "住宅楼 08 住宅建筑 · 6 层（估）" [ref=e196] [cursor=pointer]:
+          - img [ref=e198]
+          - generic [ref=e202]:
+            - strong [ref=e203]: 住宅楼 08
+            - generic [ref=e204]: 住宅建筑 · 6 层（估）
+          - img [ref=e205]
+        - button "住宅楼 09 住宅建筑 · 6 层（估）" [ref=e207] [cursor=pointer]:
+          - img [ref=e209]
+          - generic [ref=e213]:
+            - strong [ref=e214]: 住宅楼 09
+            - generic [ref=e215]: 住宅建筑 · 6 层（估）
+          - img [ref=e216]
+        - button "住宅楼 10 住宅建筑 · 6 层（估）" [ref=e218] [cursor=pointer]:
+          - img [ref=e220]
+          - generic [ref=e224]:
+            - strong [ref=e225]: 住宅楼 10
+            - generic [ref=e226]: 住宅建筑 · 6 层（估）
+          - img [ref=e227]
+        - button "配套建筑 03 配套建筑 · 3 层（估）" [ref=e229] [cursor=pointer]:
+          - img [ref=e231]
+          - generic [ref=e235]:
+            - strong [ref=e236]: 配套建筑 03
+            - generic [ref=e237]: 配套建筑 · 3 层（估）
+          - img [ref=e238]
+        - button "配套建筑 04 配套建筑 · 3 层（估）" [ref=e240] [cursor=pointer]:
+          - img [ref=e242]
+          - generic [ref=e246]:
+            - strong [ref=e247]: 配套建筑 04
+            - generic [ref=e248]: 配套建筑 · 3 层（估）
+          - img [ref=e249]
+        - button "配套建筑 05 配套建筑 · 3 层（估）" [ref=e251] [cursor=pointer]:
+          - img [ref=e253]
+          - generic [ref=e257]:
+            - strong [ref=e258]: 配套建筑 05
+            - generic [ref=e259]: 配套建筑 · 3 层（估）
+          - img [ref=e260]
+        - button "住宅楼 11 住宅建筑 · 6 层（估）" [ref=e262] [cursor=pointer]:
+          - img [ref=e264]
+          - generic [ref=e268]:
+            - strong [ref=e269]: 住宅楼 11
+            - generic [ref=e270]: 住宅建筑 · 6 层（估）
+          - img [ref=e271]
+        - button "住宅楼 12 住宅建筑 · 6 层（估）" [ref=e273] [cursor=pointer]:
+          - img [ref=e275]
+          - generic [ref=e279]:
+            - strong [ref=e280]: 住宅楼 12
+            - generic [ref=e281]: 住宅建筑 · 6 层（估）
+          - img [ref=e282]
+        - button "配套建筑 06 配套建筑 · 3 层（估）" [ref=e284] [cursor=pointer]:
+          - img [ref=e286]
+          - generic [ref=e290]:
+            - strong [ref=e291]: 配套建筑 06
+            - generic [ref=e292]: 配套建筑 · 3 层（估）
+          - img [ref=e293]
+        - button "住宅楼 13 住宅建筑 · 6 层（估）" [ref=e295] [cursor=pointer]:
+          - img [ref=e297]
+          - generic [ref=e301]:
+            - strong [ref=e302]: 住宅楼 13
+            - generic [ref=e303]: 住宅建筑 · 6 层（估）
+          - img [ref=e304]
+        - button "住宅楼 14 住宅建筑 · 6 层（估）" [ref=e306] [cursor=pointer]:
+          - img [ref=e308]
+          - generic [ref=e312]:
+            - strong [ref=e313]: 住宅楼 14
+            - generic [ref=e314]: 住宅建筑 · 6 层（估）
+          - img [ref=e315]
+        - button "住宅楼 15 住宅建筑 · 6 层（估）" [ref=e317] [cursor=pointer]:
+          - img [ref=e319]
+          - generic [ref=e323]:
+            - strong [ref=e324]: 住宅楼 15
+            - generic [ref=e325]: 住宅建筑 · 6 层（估）
+          - img [ref=e326]
+        - button "住宅楼 16 住宅建筑 · 6 层（估）" [ref=e328] [cursor=pointer]:
+          - img [ref=e330]
+          - generic [ref=e334]:
+            - strong [ref=e335]: 住宅楼 16
+            - generic [ref=e336]: 住宅建筑 · 6 层（估）
+          - img [ref=e337]
+        - button "配套建筑 07 配套建筑 · 3 层（估）" [ref=e339] [cursor=pointer]:
+          - img [ref=e341]
+          - generic [ref=e345]:
+            - strong [ref=e346]: 配套建筑 07
+            - generic [ref=e347]: 配套建筑 · 3 层（估）
+          - img [ref=e348]
+        - button "住宅楼 17 住宅建筑 · 6 层（估）" [ref=e350] [cursor=pointer]:
+          - img [ref=e352]
+          - generic [ref=e356]:
+            - strong [ref=e357]: 住宅楼 17
+            - generic [ref=e358]: 住宅建筑 · 6 层（估）
+          - img [ref=e359]
+        - button "住宅楼 18 住宅建筑 · 6 层（估）" [ref=e361] [cursor=pointer]:
+          - img [ref=e363]
+          - generic [ref=e367]:
+            - strong [ref=e368]: 住宅楼 18
+            - generic [ref=e369]: 住宅建筑 · 6 层（估）
+          - img [ref=e370]
+        - button "住宅楼 19 住宅建筑 · 6 层（估）" [ref=e372] [cursor=pointer]:
+          - img [ref=e374]
+          - generic [ref=e378]:
+            - strong [ref=e379]: 住宅楼 19
+            - generic [ref=e380]: 住宅建筑 · 6 层（估）
+          - img [ref=e381]
+        - button "住宅楼 20 住宅建筑 · 6 层（估）" [ref=e383] [cursor=pointer]:
+          - img [ref=e385]
+          - generic [ref=e389]:
+            - strong [ref=e390]: 住宅楼 20
+            - generic [ref=e391]: 住宅建筑 · 6 层（估）
+          - img [ref=e392]
+        - button "住宅楼 21 住宅建筑 · 6 层（估）" [ref=e394] [cursor=pointer]:
+          - img [ref=e396]
+          - generic [ref=e400]:
+            - strong [ref=e401]: 住宅楼 21
+            - generic [ref=e402]: 住宅建筑 · 6 层（估）
+          - img [ref=e403]
+        - button "住宅楼 22 住宅建筑 · 6 层（估）" [ref=e405] [cursor=pointer]:
+          - img [ref=e407]
+          - generic [ref=e411]:
+            - strong [ref=e412]: 住宅楼 22
+            - generic [ref=e413]: 住宅建筑 · 6 层（估）
+          - img [ref=e414]
+        - button "住宅楼 23 住宅建筑 · 6 层（估）" [ref=e416] [cursor=pointer]:
+          - img [ref=e418]
+          - generic [ref=e422]:
+            - strong [ref=e423]: 住宅楼 23
+            - generic [ref=e424]: 住宅建筑 · 6 层（估）
+          - img [ref=e425]
+        - button "配套建筑 08 配套建筑 · 3 层（估）" [ref=e427] [cursor=pointer]:
+          - img [ref=e429]
+          - generic [ref=e433]:
+            - strong [ref=e434]: 配套建筑 08
+            - generic [ref=e435]: 配套建筑 · 3 层（估）
+          - img [ref=e436]
+        - button "住宅楼 24 住宅建筑 · 6 层（估）" [ref=e438] [cursor=pointer]:
+          - img [ref=e440]
+          - generic [ref=e444]:
+            - strong [ref=e445]: 住宅楼 24
+            - generic [ref=e446]: 住宅建筑 · 6 层（估）
+          - img [ref=e447]
+        - button "住宅楼 25 住宅建筑 · 6 层（估）" [ref=e449] [cursor=pointer]:
+          - img [ref=e451]
+          - generic [ref=e455]:
+            - strong [ref=e456]: 住宅楼 25
+            - generic [ref=e457]: 住宅建筑 · 6 层（估）
+          - img [ref=e458]
+        - button "住宅楼 26 住宅建筑 · 6 层（估）" [ref=e460] [cursor=pointer]:
+          - img [ref=e462]
+          - generic [ref=e466]:
+            - strong [ref=e467]: 住宅楼 26
+            - generic [ref=e468]: 住宅建筑 · 6 层（估）
+          - img [ref=e469]
+        - button "住宅楼 27 住宅建筑 · 6 层（估）" [ref=e471] [cursor=pointer]:
+          - img [ref=e473]
+          - generic [ref=e477]:
+            - strong [ref=e478]: 住宅楼 27
+            - generic [ref=e479]: 住宅建筑 · 6 层（估）
+          - img [ref=e480]
+        - button "配套建筑 09 配套建筑 · 3 层（估）" [ref=e482] [cursor=pointer]:
+          - img [ref=e484]
+          - generic [ref=e488]:
+            - strong [ref=e489]: 配套建筑 09
+            - generic [ref=e490]: 配套建筑 · 3 层（估）
+          - img [ref=e491]
+        - button "住宅楼 28 住宅建筑 · 6 层（估）" [ref=e493] [cursor=pointer]:
+          - img [ref=e495]
+          - generic [ref=e499]:
+            - strong [ref=e500]: 住宅楼 28
+            - generic [ref=e501]: 住宅建筑 · 6 层（估）
+          - img [ref=e502]
+        - button "住宅楼 29 住宅建筑 · 6 层（估）" [ref=e504] [cursor=pointer]:
+          - img [ref=e506]
+          - generic [ref=e510]:
+            - strong [ref=e511]: 住宅楼 29
+            - generic [ref=e512]: 住宅建筑 · 6 层（估）
+          - img [ref=e513]
+        - button "住宅楼 30 住宅建筑 · 6 层（估）" [ref=e515] [cursor=pointer]:
+          - img [ref=e517]
+          - generic [ref=e521]:
+            - strong [ref=e522]: 住宅楼 30
+            - generic [ref=e523]: 住宅建筑 · 6 层（估）
+          - img [ref=e524]
+        - button "住宅楼 31 住宅建筑 · 6 层（估）" [ref=e526] [cursor=pointer]:
+          - img [ref=e528]
+          - generic [ref=e532]:
+            - strong [ref=e533]: 住宅楼 31
+            - generic [ref=e534]: 住宅建筑 · 6 层（估）
+          - img [ref=e535]
+        - button "配套建筑 10 配套建筑 · 3 层（估）" [ref=e537] [cursor=pointer]:
+          - img [ref=e539]
+          - generic [ref=e543]:
+            - strong [ref=e544]: 配套建筑 10
+            - generic [ref=e545]: 配套建筑 · 3 层（估）
+          - img [ref=e546]
+        - button "配套建筑 11 配套建筑 · 3 层（估）" [ref=e548] [cursor=pointer]:
+          - img [ref=e550]
+          - generic [ref=e554]:
+            - strong [ref=e555]: 配套建筑 11
+            - generic [ref=e556]: 配套建筑 · 3 层（估）
+          - img [ref=e557]
+        - button "住宅楼 32 住宅建筑 · 6 层（估）" [ref=e559] [cursor=pointer]:
+          - img [ref=e561]
+          - generic [ref=e565]:
+            - strong [ref=e566]: 住宅楼 32
+            - generic [ref=e567]: 住宅建筑 · 6 层（估）
+          - img [ref=e568]
+        - button "配套建筑 12 配套建筑 · 3 层（估）" [ref=e570] [cursor=pointer]:
+          - img [ref=e572]
+          - generic [ref=e576]:
+            - strong [ref=e577]: 配套建筑 12
+            - generic [ref=e578]: 配套建筑 · 3 层（估）
+          - img [ref=e579]
+        - button "住宅楼 33 住宅建筑 · 6 层（估）" [ref=e581] [cursor=pointer]:
+          - img [ref=e583]
+          - generic [ref=e587]:
+            - strong [ref=e588]: 住宅楼 33
+            - generic [ref=e589]: 住宅建筑 · 6 层（估）
+          - img [ref=e590]
+        - button "住宅楼 34 住宅建筑 · 6 层（估）" [ref=e592] [cursor=pointer]:
+          - img [ref=e594]
+          - generic [ref=e598]:
+            - strong [ref=e599]: 住宅楼 34
+            - generic [ref=e600]: 住宅建筑 · 6 层（估）
+          - img [ref=e601]
+        - button "西侧厂房甲 厂房建筑 · 2 层（估）" [ref=e603] [cursor=pointer]:
+          - img [ref=e605]
+          - generic [ref=e609]:
+            - strong [ref=e610]: 西侧厂房甲
+            - generic [ref=e611]: 厂房建筑 · 2 层（估）
+          - img [ref=e612]
+        - button "西侧厂房乙 厂房建筑 · 2 层（估）" [ref=e614] [cursor=pointer]:
+          - img [ref=e616]
+          - generic [ref=e620]:
+            - strong [ref=e621]: 西侧厂房乙
+            - generic [ref=e622]: 厂房建筑 · 2 层（估）
+          - img [ref=e623]
+        - button "西北附属楼 01 配套建筑 · 2 层（估）" [ref=e625] [cursor=pointer]:
+          - img [ref=e627]
+          - generic [ref=e631]:
+            - strong [ref=e632]: 西北附属楼 01
+            - generic [ref=e633]: 配套建筑 · 2 层（估）
+          - img [ref=e634]
+        - button "西北附属楼 02 配套建筑 · 2 层（估）" [ref=e636] [cursor=pointer]:
+          - img [ref=e638]
+          - generic [ref=e642]:
+            - strong [ref=e643]: 西北附属楼 02
+            - generic [ref=e644]: 配套建筑 · 2 层（估）
+          - img [ref=e645]
+        - button "西北附属楼 03 配套建筑 · 2 层（估）" [ref=e647] [cursor=pointer]:
+          - img [ref=e649]
+          - generic [ref=e653]:
+            - strong [ref=e654]: 西北附属楼 03
+            - generic [ref=e655]: 配套建筑 · 2 层（估）
+          - img [ref=e656]
+        - button "西北附属楼 04 配套建筑 · 2 层（估）" [ref=e658] [cursor=pointer]:
+          - img [ref=e660]
+          - generic [ref=e664]:
+            - strong [ref=e665]: 西北附属楼 04
+            - generic [ref=e666]: 配套建筑 · 2 层（估）
+          - img [ref=e667]
+        - button "西北附属楼 05 配套建筑 · 2 层（估）" [ref=e669] [cursor=pointer]:
+          - img [ref=e671]
+          - generic [ref=e675]:
+            - strong [ref=e676]: 西北附属楼 05
+            - generic [ref=e677]: 配套建筑 · 2 层（估）
+          - img [ref=e678]
+        - button "西北附属楼 06 配套建筑 · 2 层（估）" [ref=e680] [cursor=pointer]:
+          - img [ref=e682]
+          - generic [ref=e686]:
+            - strong [ref=e687]: 西北附属楼 06
+            - generic [ref=e688]: 配套建筑 · 2 层（估）
+          - img [ref=e689]
+        - button "西北附属楼 07 配套建筑 · 2 层（估）" [ref=e691] [cursor=pointer]:
+          - img [ref=e693]
+          - generic [ref=e697]:
+            - strong [ref=e698]: 西北附属楼 07
+            - generic [ref=e699]: 配套建筑 · 2 层（估）
+          - img [ref=e700]
+        - button "西北附属楼 08 配套建筑 · 2 层（估）" [ref=e702] [cursor=pointer]:
+          - img [ref=e704]
+          - generic [ref=e708]:
+            - strong [ref=e709]: 西北附属楼 08
+            - generic [ref=e710]: 配套建筑 · 2 层（估）
+          - img [ref=e711]
+        - button "西北附属楼 09 配套建筑 · 2 层（估）" [ref=e713] [cursor=pointer]:
+          - img [ref=e715]
+          - generic [ref=e719]:
+            - strong [ref=e720]: 西北附属楼 09
+            - generic [ref=e721]: 配套建筑 · 2 层（估）
+          - img [ref=e722]
+        - button "西北附属楼 10 配套建筑 · 2 层（估）" [ref=e724] [cursor=pointer]:
+          - img [ref=e726]
+          - generic [ref=e730]:
+            - strong [ref=e731]: 西北附属楼 10
+            - generic [ref=e732]: 配套建筑 · 2 层（估）
+          - img [ref=e733]
+        - button "西北附属楼 11 配套建筑 · 2 层（估）" [ref=e735] [cursor=pointer]:
+          - img [ref=e737]
+          - generic [ref=e741]:
+            - strong [ref=e742]: 西北附属楼 11
+            - generic [ref=e743]: 配套建筑 · 2 层（估）
+          - img [ref=e744]
+        - button "西北附属楼 12 配套建筑 · 2 层（估）" [ref=e746] [cursor=pointer]:
+          - img [ref=e748]
+          - generic [ref=e752]:
+            - strong [ref=e753]: 西北附属楼 12
+            - generic [ref=e754]: 配套建筑 · 2 层（估）
+          - img [ref=e755]
+        - button "西北附属楼 13 配套建筑 · 2 层（估）" [ref=e757] [cursor=pointer]:
+          - img [ref=e759]
+          - generic [ref=e763]:
+            - strong [ref=e764]: 西北附属楼 13
+            - generic [ref=e765]: 配套建筑 · 2 层（估）
+          - img [ref=e766]
+        - button "西北附属楼 14 配套建筑 · 2 层（估）" [ref=e768] [cursor=pointer]:
+          - img [ref=e770]
+          - generic [ref=e774]:
+            - strong [ref=e775]: 西北附属楼 14
+            - generic [ref=e776]: 配套建筑 · 2 层（估）
+          - img [ref=e777]
+        - button "西北附属楼 15 配套建筑 · 2 层（估）" [ref=e779] [cursor=pointer]:
+          - img [ref=e781]
+          - generic [ref=e785]:
+            - strong [ref=e786]: 西北附属楼 15
+            - generic [ref=e787]: 配套建筑 · 2 层（估）
+          - img [ref=e788]
+      - generic [ref=e790]:
+        - generic [ref=e791]:
+          - generic [ref=e792]:
+            - img [ref=e793]
+            - text: 场景图层
+          - generic [ref=e797]: 4 已开启
+        - button "绿化树木" [pressed] [ref=e798] [cursor=pointer]:
+          - generic [ref=e799]:
+            - img [ref=e800]
+            - text: 绿化树木
+        - button "模拟行人" [pressed] [ref=e804] [cursor=pointer]:
+          - generic [ref=e805]:
+            - img [ref=e806]
+            - text: 模拟行人
+        - button "模拟车辆" [pressed] [ref=e813] [cursor=pointer]:
+          - generic [ref=e814]:
+            - img [ref=e815]
+            - text: 模拟车辆
+        - button "楼宇标注" [pressed] [ref=e821] [cursor=pointer]:
+          - generic [ref=e822]:
+            - img [ref=e823]
+            - text: 楼宇标注
+        - button "行驶轨迹" [ref=e828] [cursor=pointer]:
+          - generic [ref=e829]:
+            - img [ref=e830]
+            - text: 行驶轨迹
+        - button "OSM 轮廓" [ref=e836] [cursor=pointer]:
+          - generic [ref=e837]:
+            - img [ref=e838]
+            - text: OSM 轮廓
+      - button "空间数据来源 OpenStreetMap · 2026.09.20" [ref=e844] [cursor=pointer]:
+        - img [ref=e846]
+        - generic [ref=e850]:
+          - strong [ref=e851]: 空间数据来源
+          - generic [ref=e852]: OpenStreetMap · 2026.09.20
+        - img [ref=e853]
+    - region "三维园区场景" [ref=e856]:
+      - generic [ref=e857]:
+        - generic "可旋转、缩放和点击楼宇的三维园区" [ref=e858]
+        - generic:
+          - button "定位国际部大楼" [ref=e859] [cursor=pointer]: 国际部大楼
+          - button "定位装备专业化大楼" [ref=e860] [cursor=pointer]: 装备专业化大楼
+          - button "定位北侧办公楼" [ref=e861] [cursor=pointer]: 北侧办公楼
+          - generic: 范阳中路
+          - generic: 朝阳路
+          - generic: 亨通大街
+          - generic: 火炬街
+      - generic:
+        - generic [ref=e862]:
+          - text: 全园区视角
+          - generic [ref=e864]: 3D
+        - generic [ref=e865]:
+          - button "展开运行概览" [ref=e1156] [cursor=pointer]:
+            - img [ref=e1157]
+          - img [ref=e867]
+          - group "页面风格切换" [ref=e873]:
+            - button "日间" [ref=e874] [cursor=pointer]
+            - button "夜间" [ref=e875] [cursor=pointer]
+            - button "手动" [ref=e876] [cursor=pointer]
+            - button "自动" [ref=e877] [cursor=pointer]
+      - generic [ref=e882]:
+        - button "恢复全园区视角" [ref=e883] [cursor=pointer]:
+          - img [ref=e884]
+        - button "俯视园区" [ref=e887] [cursor=pointer]:
+          - img [ref=e888]
+        - button "查看南侧办公区" [ref=e892] [cursor=pointer]:
+          - img [ref=e893]
+        - button "切换夜间" [ref=e898] [cursor=pointer]:
+          - img [ref=e899]
+        - button "切换全屏" [ref=e901] [cursor=pointer]:
+          - img [ref=e902]
+      - generic [ref=e907]:
+        - generic [ref=e908]: "N"
+        - img [ref=e909]
+        - generic [ref=e911]: 正北参考
+      - generic [ref=e912]: 地理轮廓还原 · 建筑立面近似重建
+      - generic [ref=e914]:
+        - generic [ref=e915]:
+          - generic [ref=e916]: 园区导航
+          - img [ref=e917]
+        - img "园区建筑缩略图，点击楼宇定位" [ref=e920]:
+          - generic "住宅楼 01" [ref=e923] [cursor=pointer]
+          - generic "住宅楼 02" [ref=e924] [cursor=pointer]
+          - generic "住宅楼 03" [ref=e925] [cursor=pointer]
+          - generic "配套建筑 01" [ref=e926] [cursor=pointer]
+          - generic "配套建筑 02" [ref=e927] [cursor=pointer]
+          - generic "住宅楼 04" [ref=e928] [cursor=pointer]
+          - generic "住宅楼 05" [ref=e929] [cursor=pointer]
+          - generic "住宅楼 06" [ref=e930] [cursor=pointer]
+          - generic "住宅楼 07" [ref=e931] [cursor=pointer]
+          - generic "住宅楼 08" [ref=e932] [cursor=pointer]
+          - generic "住宅楼 09" [ref=e933] [cursor=pointer]
+          - generic "住宅楼 10" [ref=e934] [cursor=pointer]
+          - generic "配套建筑 03" [ref=e935] [cursor=pointer]
+          - generic "配套建筑 04" [ref=e936] [cursor=pointer]
+          - generic "配套建筑 05" [ref=e937] [cursor=pointer]
+          - generic "住宅楼 11" [ref=e938] [cursor=pointer]
+          - generic "住宅楼 12" [ref=e939] [cursor=pointer]
+          - generic "配套建筑 06" [ref=e940] [cursor=pointer]
+          - generic "住宅楼 13" [ref=e941] [cursor=pointer]
+          - generic "住宅楼 14" [ref=e942] [cursor=pointer]
+          - generic "住宅楼 15" [ref=e943] [cursor=pointer]
+          - generic "住宅楼 16" [ref=e944] [cursor=pointer]
+          - generic "配套建筑 07" [ref=e945] [cursor=pointer]
+          - generic "住宅楼 17" [ref=e946] [cursor=pointer]
+          - generic "住宅楼 18" [ref=e947] [cursor=pointer]
+          - generic "住宅楼 19" [ref=e948] [cursor=pointer]
+          - generic "住宅楼 20" [ref=e949] [cursor=pointer]
+          - generic "住宅楼 21" [ref=e950] [cursor=pointer]
+          - generic "住宅楼 22" [ref=e951] [cursor=pointer]
+          - generic "住宅楼 23" [ref=e952] [cursor=pointer]
+          - generic "配套建筑 08" [ref=e953] [cursor=pointer]
+          - generic "住宅楼 24" [ref=e954] [cursor=pointer]
+          - generic "住宅楼 25" [ref=e955] [cursor=pointer]
+          - generic "住宅楼 26" [ref=e956] [cursor=pointer]
+          - generic "住宅楼 27" [ref=e957] [cursor=pointer]
+          - generic "配套建筑 09" [ref=e958] [cursor=pointer]
+          - generic "住宅楼 28" [ref=e959] [cursor=pointer]
+          - generic "住宅楼 29" [ref=e960] [cursor=pointer]
+          - generic "住宅楼 30" [ref=e961] [cursor=pointer]
+          - generic "住宅楼 31" [ref=e962] [cursor=pointer]
+          - generic "配套建筑 10" [ref=e963] [cursor=pointer]
+          - generic "配套建筑 11" [ref=e964] [cursor=pointer]
+          - generic "住宅楼 32" [ref=e965] [cursor=pointer]
+          - generic "配套建筑 12" [ref=e966] [cursor=pointer]
+          - generic "住宅楼 33" [ref=e967] [cursor=pointer]
+          - generic "住宅楼 34" [ref=e968] [cursor=pointer]
+          - generic "国际部大楼" [ref=e969] [cursor=pointer]
+          - generic "装备专业化大楼" [ref=e970] [cursor=pointer]
+          - generic "北侧办公楼" [ref=e971] [cursor=pointer]
+          - generic "西侧厂房甲" [ref=e972] [cursor=pointer]
+          - generic "西侧厂房乙" [ref=e973] [cursor=pointer]
+          - generic "西北附属楼 01" [ref=e974] [cursor=pointer]
+          - generic "西北附属楼 02" [ref=e975] [cursor=pointer]
+          - generic "西北附属楼 03" [ref=e976] [cursor=pointer]
+          - generic "西北附属楼 04" [ref=e977] [cursor=pointer]
+          - generic "西北附属楼 05" [ref=e978] [cursor=pointer]
+          - generic "西北附属楼 06" [ref=e979] [cursor=pointer]
+          - generic "西北附属楼 07" [ref=e980] [cursor=pointer]
+          - generic "西北附属楼 08" [ref=e981] [cursor=pointer]
+          - generic "西北附属楼 09" [ref=e982] [cursor=pointer]
+          - generic "西北附属楼 10" [ref=e983] [cursor=pointer]
+          - generic "西北附属楼 11" [ref=e984] [cursor=pointer]
+          - generic "西北附属楼 12" [ref=e985] [cursor=pointer]
+          - generic "西北附属楼 13" [ref=e986] [cursor=pointer]
+          - generic "西北附属楼 14" [ref=e987] [cursor=pointer]
+          - generic "西北附属楼 15" [ref=e988] [cursor=pointer]
+        - generic [ref=e991]: 约 100 m
+      - generic [ref=e992]:
+        - generic [ref=e993]:
+          - text: WebGL 已连接
+          - generic [ref=e995]: 21 FPS
+        - link "© OpenStreetMap contributors" [ref=e996] [cursor=pointer]:
+          - /url: https://www.openstreetmap.org/copyright
+  - contentinfo [ref=e1124]:
+    - generic [ref=e1125]:
+      - img [ref=e1127]
+      - generic [ref=e1130]:
+        - strong [ref=e1131]: 时空回放
+        - generic [ref=e1132]: 模拟时间推进中
+    - generic [ref=e1133]:
+      - button "回到起点" [ref=e1134] [cursor=pointer]:
+        - img [ref=e1135]
+      - button "暂停模拟" [ref=e1137] [cursor=pointer]:
+        - img [ref=e1138]
+      - combobox "回放速度" [ref=e1141] [cursor=pointer]:
+        - option "1×" [selected]
+        - option "2×"
+        - option "4×"
+        - option "8×"
+    - generic [ref=e1142]:
+      - generic [ref=e1143]:
+        - generic [ref=e1144]: 09:00
+        - generic [ref=e1145]: 09:03
+        - generic [ref=e1146]: 09:06
+        - generic [ref=e1147]: 09:09
+        - generic [ref=e1148]: 09:12
+        - generic [ref=e1149]: 09:15
+      - generic [ref=e1150]:
+        - slider "回放时间轴" [ref=e1151] [cursor=pointer]: "199.5"
+        - button "回放国际部大楼车辆异常停留" [ref=e1152] [cursor=pointer]
+        - button "回放装备专业化大楼楼宇温度偏高" [ref=e1153] [cursor=pointer]
+    - generic [ref=e1154]:
+      - text: 09:03:19
+      - generic [ref=e1155]: 2026 年 09 月 20 日

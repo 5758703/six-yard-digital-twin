@@ -1,0 +1,16 @@
+{
+  "source": "User-provided Overpass OSM XML saved as Downloads/map",
+  "importedAt": "2026-09-21",
+  "osmTimestamp": "2026-09-21T08:04:50Z",
+  "bounds": {
+    "minlat": 39.481761,
+    "minlon": 116.019552,
+    "maxlat": 39.488849,
+    "maxlon": 116.033714
+  },
+  "files": [
+    "public/data/osm-2026-09-21.osm.xml",
+    "public/data/osm-2026-09-21.json"
+  ],
+  "notes": "Replaces earlier 2026-09-20 campus extract for building footprints and local residential ways. 范阳中路 dual centerlines remain merged into fanyang-middle."
+}

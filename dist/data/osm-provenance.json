@@ -1,0 +1,18 @@
+{
+  "downloadedAt": "2026-09-20T07:38:09.767Z",
+  "osmTimestamp": "2026-09-20T07:36:35Z",
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "query": "[out:json][timeout:45];(way[highway](39.4831,116.0206,39.489,116.0298);way[building](39.4831,116.0206,39.489,116.0298);way[landuse](39.4831,116.0206,39.489,116.0298);way[amenity=parking](39.4831,116.0206,39.489,116.0298);node[natural=tree](39.4831,116.0206,39.489,116.0298););out geom;",
+  "bbox": [
+    39.4831,
+    116.0206,
+    39.489,
+    116.0298
+  ],
+  "sha256": "e1dc2af0b56b307c42aaacece86c947ba1185ec0005843e0f16dcd96861f1263",
+  "elementCount": 83,
+  "attribution": "© OpenStreetMap contributors",
+  "license": "ODbL 1.0",
+  "licenseUrl": "https://www.openstreetmap.org/copyright",
+  "limitations": "内部建筑和树木不足时按用户截图补绘；楼高、立面和模拟运行不来自 OSM。"
+}
