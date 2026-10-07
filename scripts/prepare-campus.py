@@ -83,7 +83,7 @@ except StopIteration:
 for spec in [
     ('international', '国际部大楼', ix, iz, iw, idp, 72, 20, ipoly, [1560982331], 'OSM way 1560982331（国际部大楼）轮廓；层数用户确认，高度与立面近似'),
     ('equipment', '装备专业化大楼', ex, ez, ew, ed, 25, 6, epoly, [1560982332, 390196010], 'OSM ways 1560982332+390196010（办公厂房等）合并轮廓；层数用户确认，百度地图称装备专业化大楼'),
-    ('factory-1', '厂房', fx, fz, fw, fd, 9, 2, fpoly, [390196198], 'OSM way 390196198 轮廓；百度地图标注为厂房'),
+    ('factory-1', '厂房', fx, fz, fw, fd, 9, 2, fpoly, [390196198], 'OSM way 390196198 轮廓；蓝色弧形压型钢板屋顶与东侧浅色墙面依据用户提供的北向南实拍照片；两个东门依据用户确认'),
     ('north-office', '北侧办公楼', nx, nz, nw, ndp, 21, 5, npoly, [390195851], 'OSM/截图推定；高度与立面近似'),
 ]:
     bid, name, x, z, w, d, h, floors, poly, osm_ids, source = spec
@@ -92,6 +92,11 @@ for spec in [
         x=x, z=z, w=w, d=d, height=h, floors=floors, polygon=poly,
         source=source, osmIds=osm_ids,
     ))
+
+for building in buildings:
+    building['areaId'] = 'international-office' if building['id'] == 'international' else 'shared-yard'
+    if building['id'] == 'factory-1':
+        building['eastDoors'] = [169, 196]
 
 roads = []
 # Skip dual/clipped 范阳中路 centerlines; replace with one continuous carriageway.
@@ -125,12 +130,19 @@ north_road_z = min(iz - idp / 2, ez - ed / 2, fz - fd / 2) - 6
 GATE_X = round(ix, 1)
 roads.append(dict(id='南门引路', name='南门引路', points=[[GATE_X, round(intl_south, 1)], [GATE_X, FANYANG_Z]], width=10,
                   source='用户要求：国际部大楼中间直连范阳中路'))
-# Keep north remnant of OSM spur only.
-for road in roads:
-    if road['id'] == 'osm-1560982336':
-        ns = [[x, z] for x, z in road['points'] if abs(x - 16) < 10 and z <= north_road_z + 20]
-        road['points'] = ns if len(ns) >= 2 else [[16.2, north_road_z], [16.2, north_road_z + 12]]
-        road['source'] += '；仅保留北侧南北向残段'
+# The clipped spur would run through the independent office enclosure.
+roads = [road for road in roads if road['id'] != 'osm-1560982336']
+# Factory east doors open onto the lane shared with the equipment building.
+# Its northern end stops short of the residential footprint.
+roads.append(dict(id='shared-yard-service', name='共用院区通道',
+                  points=[[56.5, round(north_road_z, 1)], [56.5, 220]], width=7,
+                  source='用户确认：厂房、装备楼与住宅区同属一个院区；通道为近似布局'))
+roads.append(dict(id='factory-yard-connector', name='厂房院子西南联络通道',
+                  points=[[34, 225], [34, 219], [56.5, 219], [65, 219], [65, 202]], width=5,
+                  source='用户确认：厂房院子西南出入口与装备专业化大楼相连；通道为示意布局'))
+roads.append(dict(id='international-north-link', name='国际部北侧出入口',
+                  points=[[-82, 147], [-82, 100]], width=4,
+                  source='用户确认：国际部北侧出入口连接住宅小区；步行通道为示意布局'))
 
 # 按用户要求：去掉南侧绿化带与楼前分块绿地。
 greens = []
@@ -170,6 +182,57 @@ for z in [-232, -211, 0, 24, int(north_road_z)]:
         if clear(x, z):
             trees.append([x, z])
 
+# Fill the two existing plane-tree rows along the straight north-south
+# residential avenue. Some original grid positions fall inside building
+# setbacks, so move only those missing trees toward the road-side pavement.
+main_road = next(road for road in roads if road['id'] == 'osm-1560982335')
+
+def main_road_x(z):
+    for (ax, az), (bx, bz) in zip(main_road['points'], main_road['points'][1:]):
+        if min(az, bz) <= z <= max(az, bz) and abs(az - bz) > 1:
+            return ax + (bx - ax) * (z - az) / (bz - az)
+    raise ValueError(f'North-south avenue has no centerline at z={z}')
+
+for row_x, side in [(151, -1), (183, 1)]:
+    for z in range(-230, 116, 15):
+        if [row_x, z] in trees:
+            continue
+        center_x = main_road_x(z)
+        candidates = sorted(range(row_x - 14, row_x + 15), key=lambda x: abs(x - row_x))
+        for x in candidates:
+            roadside_offset = side * (x - center_x)
+            if not 5.5 <= roadside_offset <= 13:
+                continue
+            if clear(x, z) and all(math.hypot(x - tx, z - tz) >= 9 for tx, tz in trees):
+                trees.append([x, z])
+                break
+
+areas = [
+    dict(id='shared-yard', name='六号院共用院区',
+         buildingIds=[b['id'] for b in buildings if b['areaId'] == 'shared-yard'],
+         factoryYardGate=dict(side='southwest', x=34, z=225, width=10, connectsTo='equipment'),
+         source='用户确认：厂房、装备专业化大楼和住宅区属于同一院区'),
+    dict(id='international-office', name='国际部独立办公区', buildingIds=['international'],
+         boundary=dict(west=-102, east=21.5, north=147, south=225,
+                       gates=[dict(side='north', x=-82, width=11, connectsTo='residential'),
+                              dict(side='south', x=GATE_X, width=12, connectsTo='fanyang-middle')]),
+         source='用户确认：国际部大楼为单独隔离的办公大楼；围界位置与门宽为示意'),
+]
+
+# Photo taken from a residential building north of the factory, looking south.
+# Object positions and dimensions are visual estimates within the OSM building gap.
+factory_courtyard = dict(
+    west=round(fx + fw / 2 + .08, 2), east=round(ex - ew / 2 - .12, 2),
+    north=round(fz - fd / 2 + .25, 2), south=220,
+    badmintonCourtX=51.6, badmintonCourtCenters=[170, 186, 202],
+    cabinX=61.4, cabinCenters=[159.5, 168.5, 177.5, 186.5, 195.5],
+    greenCanopyCount=2,
+    crateStacks=[dict(x=47.6, z=179, columns=2, rows=2, height=3),
+                 dict(x=47.8, z=207, columns=2, rows=3, height=4),
+                 dict(x=53.5, z=158, columns=1, rows=4, height=3)],
+    source='用户提供的厂房实拍照片（从北面住宅楼往南拍摄）；数量、尺寸及位置按照片与 OSM 建筑间距近似重建',
+)
+
 data = dict(
     name='平安小区 · 六号院',
     origin=origin,
@@ -179,7 +242,9 @@ data = dict(
     parking=parking,
     trees=trees,
     greens=greens,
-    annotation='建筑与园路底图为 OSM 2026-09-21；国际部/厂房/装备楼采用对应 OSM 轮廓；国际部大楼中间以南门引路直连范阳中路。',
+    areas=areas,
+    factoryCourtyard=factory_courtyard,
+    annotation='建筑与园路底图为 OSM 2026-09-21；厂房弧形蓝色屋顶、浅色墙板、营房车和混凝土院子依据用户实拍照片；厂房仅有两个东门，院子西南出入口连通装备楼；厂房、装备楼及住宅区同属共用院区；国际部大楼独立围合，北侧出入口连接住宅区。',
     modelLimitations='地理底图来源为 OSM 2026-09-21；层数、外立面、绿化树种属于近似重建，不是测绘成果。',
 )
 (R / 'public/data/campus.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf8')

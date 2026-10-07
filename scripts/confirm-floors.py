@@ -10,7 +10,8 @@ for b in c['buildings']:
         b['source']='用户确认 '+str(b['floors'])+' 层；位置与可见立面依据用户图片；高度、尺寸和未见立面近似'
 c['modelLimitations']='两栋重点楼层数经用户确认（国际部20层、装备楼6层）；高度仍为估算，国际部按平均层高3.6米估为72米；非测绘成果。'
 p.write_text(json.dumps(c,ensure_ascii=False,indent=2),encoding='utf8')
-p=r/'src/App.vue';s=p.read_text(encoding='utf8').replace('{{b.floors}} 层（估）',"{{b.floors}} 层{{b.floorsConfirmed?'（已确认）':'（估）'}}").replace('<span>高度约 {{building.height}} m</span>',"<span>{{building.floors}} 层{{building.floorsConfirmed?'（已确认）':'（估）'}}</span><span>高度约 {{building.height}} m</span>").replace('轮廓、层数、未见立面及绿化仍为近似。','国际部 20 层、装备专业化大楼 6 层已由用户确认；高度、轮廓、未见立面及绿化仍为近似。');p.write_text(s,encoding='utf8')
+# The Vue view already reads floorsConfirmed directly; keep this data
+# regeneration script from duplicating UI tags on every run.
 # Both regeneration entrypoints must preserve the confirmed information.
 for name in ['scripts/prepare-campus.py','scripts/update-photo-provenance.py']:
     p=r/name;s=p.read_text(encoding='utf8')

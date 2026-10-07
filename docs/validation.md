@@ -33,3 +33,38 @@
 ## 楼层确认修订验证
 
 用户确认国际部 20 层、装备楼 6 层。已修改共享数据、可再生成脚本、模型几何、GLB 元数据及网页标签。国际部高度暂按 3.6 m 平均层高估为 72 m，装备楼暂沿用 25 m 高度估计。自动化测试 10/10 通过，生产构建通过；浏览器中两项“已确认”层数标签均验证存在，WebGL 控制台无错误。打包校验增加了完整园区与独立 GLB 中的楼层元数据断言。
+
+## 住宅实景修订验证（2026-09-29）
+
+- 对照四张用户照片，34 栋六层住宅换为浅米白／奶油色墙面、赭色首层、深色分户窗、局部防护栏和空调外机、蓝灰色单元门与深红褐色平屋面边缘。未修改建筑的 OSM 平面轮廓或估算楼层数。
+- `python scripts/update-residential-glb.py` 可重复运行；重复生成后的 `campus.glb` 大小保持 35,197,684 字节。结构校验确认 55 个 mesh、53 个材质、4 张内嵌生成纹理和 34 个住宅来源标记，所有索引与 bufferView 范围有效。
+- `npm test`：10/10 通过；`npm run build`：TypeScript 检查与 Vite 生产构建通过。内置浏览器载入最终模型，住宅 06 近景显示墙色、窗、门厅和屋面，WebGL 已连接且控制台无错误；截图位于 `renders/residential-photo-guided.png`。
+- 当前环境未提供 Blender 可执行文件，因此 `blender/campus.blend` 尚未按本次住宅修订重新保存。完整建模脚本已使用同一住宅立面函数；在 Blender 环境运行 `blender/build_campus.py` 可更新可编辑场景。
+
+## 梧桐树实景修订验证（2026-09-29）
+
+- 依据用户提供的行道树近照重建树形：主干刷白与斑驳树皮、截干分叉、深色冠层下缘和不规则叶簇。此次树形修订阶段保留当时的 290 个树位，GLB 的 `Trees` 节点名称仍支持原有图层开关。
+- `python scripts/update-tree-glb.py` 连续生成保持 `campus.glb` 为 44,629,432 字节。结构校验确认树网格有 12 个材质分组、527,800 个顶点，无未用纹理坐标；索引与缓冲区范围有效。
+- `npm test`：10/10 通过；`npm run build`：TypeScript 检查与 Vite 生产构建通过。生产预览中的“梧桐树行道”视角显示新树形，WebGL 已连接、浏览器控制台无错误；截图位于 `renders/plane-trees-photo-guided.png`。
+- 当前环境没有 Blender 可执行文件，`blender/campus.blend` 仍为本次住宅与树木修订前的快照；完整生成脚本已接入共享的树木生成函数。
+
+## 南北主路双排行道树补植（2026-09-29）
+
+- `scripts/prepare-campus.py` 沿 `osm-1560982335` 主路中心线，在两侧既有树列的空隙补入 14 棵梧桐树；全场树位由 290 增至 304。新增树与其他树最近距离为 10 米，建筑、车位和道路交叉处的狭窄位置未强行补植。
+- `python scripts/update-tree-glb.py` 重建后，`public/models/campus.glb` 为 45,388,460 字节，`public/models/manifest.json` 的 `planeTrees.count` 为 304；`dist/models/campus.glb` 与源模型一致。
+- `npm test`：10/10 通过；`npm run build`：TypeScript 检查与生产构建通过。生产预览中主路街景 WebGL 已连接，截图为 `renders/main-road-plane-tree-rows.png`。
+
+## 院区及厂房出入口修订（2026-10-05）
+
+- `public/data/campus.json` 标明两个院区：国际部独立办公区，以及包含厂房、装备专业化大楼与住宅区的共用院区。国际部北侧围界设通往住宅区的门和步行通道；南侧保留通向范阳中路的门。
+- 厂房 GLB 中移除原南立面三扇门，东立面设两扇卷帘门；厂房院子西南角设出入口，院内联络通道延伸至装备楼西南侧。围界与通道均为根据用户描述的示意布局。
+- `python scripts/update-compound-glb.py` 更新网页模型；`blender/campus_compounds.py` 由完整 Blender 生成脚本复用。生产预览的厂房东门效果图为 `renders/factory-east-doors.png`。
+- 最终 GLB 为 45,564,596 字节；静态校验确认厂房钢制门构件只位于东立面，独立围界、厂房西南院门、两条联络通道均各有一个模型节点，`dist` 与 `public` 的场地数据和 GLB 完全一致。更新脚本重复运行产物哈希不变。
+- `npm test`：10/10 通过；`npm run build`：TypeScript 与 Vite 生产构建通过；网页生产预览 WebGL 已连接。当前环境无 Blender 可执行文件，`blender/campus.blend` 尚未重新导出本次围界与厂房门位修改。
+
+## 厂房及院子实景修订（2026-10-07）
+
+- 依据从北侧住宅楼向南拍摄的照片，厂房改为蓝色弧形压型钢板屋顶、浅色旧墙板、酒红檐口、东立面两扇旧色门及重复窗洞；保留此前确认的无南门布局。
+- 厂房与装备楼之间改为混凝土地坪，新增 3 片羽毛球场的褪色黄色线条、5 辆营房车、2 处绿色弧形遮棚和 3 组蓝色周转箱。所有数量和坐标依据照片与 OSM 建筑间距近似安排。
+- 网页模型和完整 Blender 生成脚本共用 `blender/campus_compounds.py`。厂房定位镜头调整为从北向南，便于与实拍图比对。
+- `python scripts/update-compound-glb.py` 连续两次运行的 SHA256 相同；最终 GLB 为 45,892,388 字节，结构校验确认 62 个 mesh、76 个材质、3 片场线和 5 辆营房车的元数据。`npm test` 10/10 通过，`npm run build` 通过；浏览器中厂房近景已显示，WebGL 已连接且控制台无错误。

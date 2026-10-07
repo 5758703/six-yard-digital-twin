@@ -2,5 +2,31 @@
   "generator": "Blender 4.5.3 LTS",
   "buildings": 52,
   "trees": 290,
-  "note": "OSM outlines + screenshot massing; two office facades based on user photos; unseen elevations and dimensions estimated; Cycles stills skipped"
+  "note": "OSM outlines + screenshot massing; office and residential facades plus pollarded roadside plane trees guided by user photos; unseen dimensions estimated; Cycles stills skipped",
+  "residentialFacades": {
+    "count": 34,
+    "source": "Four user-supplied photographs in docs/photo",
+    "method": "Procedural weathered plaster textures and modeled windows, AC units, entrances, roof edges"
+  },
+  "planeTrees": {
+    "count": 304,
+    "source": "User-supplied photograph of roadside plane trees",
+    "method": "Pollarded forks, uneven whitewash, mottled bark, flattened multi-tone crowns and leaf sprays"
+  },
+  "compoundLayout": {
+    "factoryEastDoors": 2,
+    "factorySouthDoors": 0,
+    "factoryYardSouthwestGate": "connects to equipment building",
+    "sharedArea": "厂房、装备专业化大楼及住宅区",
+    "separateArea": "国际部独立办公区",
+    "internationalNorthGate": "connects to residential area",
+    "boundary": "示意位置，非测绘边界"
+  },
+  "factoryPhotoModel": {
+    "roof": "蓝色弧形压型钢板",
+    "courtyard": "混凝土地坪与羽毛球场线",
+    "portableCabins": 5,
+    "blueCrateGroups": 3,
+    "source": "用户提供的厂房实拍照片（从北面住宅楼往南拍摄）；数量、尺寸及位置按照片与 OSM 建筑间距近似重建"
+  }
 }
