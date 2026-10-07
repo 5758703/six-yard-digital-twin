@@ -10,7 +10,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'blender'))
 from campus_compounds import (build_factory, build_factory_courtyard, build_independent_boundary, build_service_lane,
-                              build_factory_yard_gate, build_yard_connector, build_north_walkway,
+                              build_factory_wire_fence, build_yard_connector, build_north_walkway,
                               cover_old_yard_overlap)
 
 Geometry = runpy.run_path(str(ROOT / 'scripts/update-residential-glb.py'))['Geometry']
@@ -86,7 +86,8 @@ def main():
                 canopy_green=colored('Portable cabin green awning', (.12,.34,.28)),
                 crate_blue=colored('Stacked blue plastic crates', (.035,.20,.47)),
                 crate_rim=colored('Blue crate top rims', (.08,.29,.57)),
-                crate_shadow=colored('Blue crate vent shadows', (.02,.08,.22)))
+                crate_shadow=colored('Blue crate vent shadows', (.02,.08,.22)),
+                wire=colored('Factory chain-link wire', (.33,.37,.36), .56, .55))
 
     def replace_mesh(name, geometry, extras):
         primitives = []
@@ -130,10 +131,17 @@ def main():
                  dict(areaId='international-office', source='User-confirmed separate office precinct; fence alignment estimated'))
 
     shared_area = next(a for a in DATA['areas'] if a['id'] == 'shared-yard')
-    yard_gate_mesh = Geometry()
-    build_factory_yard_gate(yard_gate_mesh, shared_area['factoryYardGate'], mats)
-    replace_mesh('Factory_yard_south_gate', yard_gate_mesh,
-                 dict(areaId='shared-yard', connectsTo='equipment'))
+    for node in gltf['nodes']:
+        if node.get('name') == 'Factory_yard_south_gate':
+            node['name'] = 'Factory_wire_fence'
+    factory_fence_mesh = Geometry()
+    build_factory_wire_fence(factory_fence_mesh, shared_area['factoryFence'],
+                             shared_area['factoryYardGate'], mats)
+    replace_mesh('Factory_wire_fence', factory_fence_mesh,
+                 dict(areaId='shared-yard', connectsTo='equipment',
+                      source=shared_area['factoryFence']['source'],
+                      pedestrianGate=shared_area['factoryFence']['pedestrianGate'],
+                      fenceSegments=len(shared_area['factoryFence']['segments'])))
 
     road = next(r for r in DATA['roads'] if r['id'] == 'shared-yard-service')
     lane_mesh = Geometry()
@@ -212,6 +220,8 @@ def main():
     manifest['compoundLayout'] = dict(factoryEastDoors=2,
                                       factorySouthDoors=0,
                                       factoryYardSouthwestGate='connects to equipment building',
+                                      factoryWireFenceSegments=len(shared_area['factoryFence']['segments']),
+                                      factoryPedestrianGate=shared_area['factoryFence']['pedestrianGate'],
                                       factoryResidentialGap='no through road or simulated people and vehicles',
                                       sharedArea='厂房、装备专业化大楼及住宅区',
                                       separateArea='国际部独立办公区',

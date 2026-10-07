@@ -17,6 +17,13 @@
     "factoryEastDoors": 2,
     "factorySouthDoors": 0,
     "factoryYardSouthwestGate": "connects to equipment building",
+    "factoryWireFenceSegments": 5,
+    "factoryPedestrianGate": {
+      "x": 66,
+      "z": 211,
+      "width": 2.2,
+      "side": "east"
+    },
     "factoryResidentialGap": "no through road or simulated people and vehicles",
     "sharedArea": "厂房、装备专业化大楼及住宅区",
     "separateArea": "国际部独立办公区",

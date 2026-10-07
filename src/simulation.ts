@@ -24,8 +24,6 @@ const EAST_NORTH_Z=121;
 const EAST_X=166;
 const WEST_X=-82;
 const SPUR_X=16;
-const GATE_X=-32.6;
-const INT_SOUTH=200;
 function inTrafficExclusion(x:number,z:number){return campus.trafficExclusionZones.some(zone=>x>zone.west&&x<zone.east&&z>zone.north&&z<zone.south);}
 function insideFootprint(x:number,z:number,polygon:number[][]){let inside=false;for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){if((polygon[i][1]>z)!==(polygon[j][1]>z)&&x<(polygon[j][0]-polygon[i][0])*(z-polygon[i][1])/(polygon[j][1]-polygon[i][1])+polygon[i][0])inside=!inside;}return inside;}
 const usableParking=campus.parking.map((p,slot)=>({p,slot})).filter(({p})=>
@@ -88,16 +86,16 @@ const walkRoutes:Point[][]=[
   [[-185,40],[-125,40],[-125,90],[-185,90],[-185,40]],
   [[SPUR_X,WEST_NORTH_Z],[WEST_X,WEST_NORTH_Z],[WEST_X,27],[SPUR_X,27],[SPUR_X,WEST_NORTH_Z]],
   [[SPUR_X,EAST_NORTH_Z],[EAST_X,EAST_NORTH_Z],[EAST_X,27],[SPUR_X,27],[SPUR_X,EAST_NORTH_Z]],
-  // Visitors use the gate's central/east apron and the southern courtyard.
-  [[GATE_X-2.5,FANYANG_Z],[GATE_X-2.5,INT_SOUTH],[GATE_X-2.5,220],[155,220],[155,225],[GATE_X-2.5,225],[GATE_X-2.5,FANYANG_Z]],
-  [[GATE_X+2.5,FANYANG_Z],[GATE_X+2.5,INT_SOUTH],[GATE_X+2.5,220],[150,220],[150,225],[GATE_X+2.5,225],[GATE_X+2.5,FANYANG_Z]],
+  // Keep walkers on Fanyang Road's north sidewalk, clear of the three
+  // buildings' south forecourt.
+  [[-60,225],[155,225],[-60,225]],
+  [[155,225],[-60,225],[155,225]],
 ];
 const walkLengths=walkRoutes.map(pathLength);
 const cycleRoutes:Point[][]=[
-  ...walkRoutes,
+  ...walkRoutes.slice(0,7),
   lanePath([[-280,FANYANG_Z],[300,FANYANG_Z]],1,12),
   lanePath([[300,FANYANG_Z],[-280,FANYANG_Z]],1,12),
-  [[GATE_X+2.5,FANYANG_Z],[GATE_X+2.5,INT_SOUTH],[GATE_X+2.5,220],[150,220],[150,225],[GATE_X+2.5,225],[GATE_X+2.5,FANYANG_Z]],
   [[WEST_X+4,WEST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[EAST_X-4,EAST_NORTH_Z],[EAST_X-4,-225],[WEST_X+4,-225],[WEST_X+4,WEST_NORTH_Z]],
 ];
 const cycleLengths=cycleRoutes.map(pathLength);

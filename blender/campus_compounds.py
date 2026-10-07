@@ -198,21 +198,76 @@ def build_service_lane(mesh, road, mats):
     mesh.box(x, (north + south) / 2, .215, road['width'], south - north, .05, mats['concrete'])
 
 
-def build_factory_yard_gate(mesh, gate, mats):
-    """South-west opening into the yard shared with the equipment building."""
-    z = gate['z']
-    opening_west = gate['x'] - gate['width'] / 2
-    opening_east = gate['x'] + gate['width'] / 2
-    for west, east in ((21.5, opening_west), (opening_east, 68)):
-        middle = (west + east) / 2
-        mesh.box(middle, z, .48, east - west, .28, .96, mats['concrete'])
-        for height in (1.24, 1.82):
-            mesh.box(middle, z, height, east - west, .09, .07, mats['steel'])
-        for xx in (west, east):
-            mesh.box(xx, z, 1.48, .12, .12, 1.12, mats['steel'])
-    for xx in (opening_west, opening_east):
-        mesh.box(xx, z, 1.25, .72, .72, 2.5, mats['ivory'])
-        mesh.box(xx, z, 2.55, .88, .88, .18, mats['steel'])
+def build_factory_wire_fence(mesh, fence, yard_gate, mats):
+    """Photo-marked chain-link runs, a south-west passage and an east wicket."""
+    wicket = fence['pedestrianGate']
+
+    def point(along, height, fixed, horizontal):
+        return (along, height, fixed) if horizontal else (fixed, height, along)
+
+    def wire(a, low, b, high, fixed, horizontal):
+        length = math.hypot(b - a, high - low)
+        if length < .01:
+            return
+        side = .009 / length
+        ds, dy = -(high - low) * side, (b - a) * side
+        mesh.shape([point(a + ds, low + dy, fixed, horizontal),
+                    point(b + ds, high + dy, fixed, horizontal),
+                    point(b - ds, high - dy, fixed, horizontal),
+                    point(a - ds, low - dy, fixed, horizontal)],
+                   [(0, 1, 2, 3)], mats['wire'])
+
+    def post(along, fixed, horizontal, gate=False):
+        x, z = (along, fixed) if horizontal else (fixed, along)
+        size = .14 if gate else .10
+        mesh.box(x, z, 1.15, size, size, 2.3, mats['steel'])
+        mesh.box(x, z, 2.32, size + .05, size + .05, .055, mats['steel'])
+
+    def panel(start, end, fixed, horizontal):
+        if end - start < .16:
+            return
+        center, length = (start + end) / 2, end - start
+        for height in (.35, 1.16, 1.97):
+            if horizontal:
+                mesh.box(center, fixed, height, length, .035, .035, mats['steel'])
+            else:
+                mesh.box(fixed, center, height, .035, length, .035, mats['steel'])
+        for index in range(math.ceil(length / 2.8) + 1):
+            post(min(start + index * 2.8, end), fixed, horizontal)
+        for index in range(math.ceil(length / .72)):
+            left, right = start + index * .72, min(start + (index + 1) * .72, end)
+            for row in range(3):
+                low, high = .38 + row * .52, .90 + row * .52
+                wire(left, low, right, high, fixed, horizontal)
+                wire(left, high, right, low, fixed, horizontal)
+
+    for (ax, az), (bx, bz) in fence['segments']:
+        horizontal = abs(az - bz) < .01
+        if not horizontal and abs(ax - bx) >= .01:
+            raise ValueError('Factory fence runs must be axis-aligned')
+        fixed = az if horizontal else ax
+        start, end = sorted((ax, bx) if horizontal else (az, bz))
+        openings = []
+        if horizontal and abs(fixed - yard_gate['z']) < .01:
+            openings.append((yard_gate['x'] - yard_gate['width'] / 2,
+                             yard_gate['x'] + yard_gate['width'] / 2))
+        if not horizontal and abs(fixed - wicket['x']) < .01:
+            openings.append((wicket['z'] - wicket['width'] / 2,
+                             wicket['z'] + wicket['width'] / 2))
+        cursor = start
+        for opening_start, opening_end in openings:
+            panel(cursor, opening_start, fixed, horizontal)
+            post(opening_start, fixed, horizontal, gate=True)
+            post(opening_end, fixed, horizontal, gate=True)
+            cursor = opening_end
+        panel(cursor, end, fixed, horizontal)
+
+    # The narrow gate is shown swung toward the equipment yard, leaving its
+    # opening visible from the same overhead angle as the user's annotation.
+    hinge_z = wicket['z'] - wicket['width'] / 2
+    panel(wicket['x'] + .16, wicket['x'] + wicket['width'] - .12,
+          hinge_z, True)
+    mesh.box(wicket['x'] + .08, hinge_z, 1.18, .16, .16, 1.8, mats['steel'])
 
 
 def build_yard_connector(mesh, road, mats):

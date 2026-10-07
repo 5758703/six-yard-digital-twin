@@ -9,7 +9,7 @@ sys.path.insert(0,str(ROOT/'blender'))
 from photo_facades import build_photo_office
 from residential_facades import build_residential, make_textures
 from plane_trees import build_plane_trees
-from campus_compounds import build_factory, build_factory_courtyard, build_independent_boundary, build_factory_yard_gate, build_north_walkway, build_yard_connector
+from campus_compounds import build_factory, build_factory_courtyard, build_independent_boundary, build_factory_wire_fence, build_north_walkway, build_yard_connector
 OUT=ROOT/'public/models'; OUT.mkdir(parents=True,exist_ok=True)
 RENDERS=ROOT/'renders'; RENDERS.mkdir(exist_ok=True)
 C=json.loads((ROOT/'public/data/campus.json').read_text(encoding='utf8'))
@@ -51,6 +51,7 @@ factory_mats={
     'crate_blue':material('Stacked blue plastic crates',(.035,.20,.47)),
     'crate_rim':material('Blue crate top rims',(.08,.29,.57)),
     'crate_shadow':material('Blue crate vent shadows',(.02,.08,.22)),
+    'wire':material('Factory chain-link wire',(.33,.37,.36),.56,.55),
 }
 lamp=material('Warm lamp diffuser',(.94,.80,.43),.25);p=MAT[lamp].node_tree.nodes.get('Principled BSDF');p.inputs['Emission Color'].default_value=(1,.68,.27,1);p.inputs['Emission Strength'].default_value=.5
 residential_textures=make_textures(OUT)
@@ -224,9 +225,10 @@ walkway.finish('International_north_walkway')
 boundary=Mesh()
 build_independent_boundary(boundary,C['areas'][1]['boundary'],dict(concrete=concrete,steel=steel,ivory=ivory))
 boundary.finish('International_boundary')
-yard_gate=Mesh()
-build_factory_yard_gate(yard_gate,C['areas'][0]['factoryYardGate'],dict(concrete=concrete,steel=steel,ivory=ivory))
-yard_gate.finish('Factory_yard_south_gate')
+yard_fence=Mesh()
+build_factory_wire_fence(yard_fence,C['areas'][0]['factoryFence'],C['areas'][0]['factoryYardGate'],
+                         dict(steel=steel,wire=factory_mats['wire']))
+yard_fence.finish('Factory_wire_fence')
 print('Growing plane trees',flush=True)
 tree=Mesh()
 build_plane_trees(tree,C['trees'],plane_tree_mats)
