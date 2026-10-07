@@ -286,7 +286,22 @@ if motion_path.exists():
                 for key in curve.keyframe_points:key.interpolation='LINEAR'
 for ob in person:bpy.data.objects.remove(ob,do_unlink=True)
 # A representative still uses the same simulated parking placements.
-for i,p in enumerate(C['parking'][:58]):car(p['x'],p['z'],[white,steel,glass,red][i%4])
+def outside_exclusions(p):
+    if any(zone['west'] < p['x'] < zone['east'] and zone['north'] < p['z'] < zone['south']
+           for zone in C.get('trafficExclusionZones', [])):
+        return False
+    def inside(poly):
+        contained = False
+        for i in range(len(poly)):
+            j = i - 1
+            ax, az = poly[i]
+            bx, bz = poly[j]
+            if (az > p['z']) != (bz > p['z']) and p['x'] < (bx - ax) * (p['z'] - az) / (bz - az) + ax:
+                contained = not contained
+        return contained
+    return not any(inside(b['polygon']) for b in C['buildings'])
+for i,p in enumerate([p for p in C['parking'] if outside_exclusions(p)][:10]):
+    car(p['x'],p['z'],[white,steel,glass,red][i%4])
 backdrop=Mesh();backdrop.box(0,0,-5.2,8000,8000,.15,material('Backdrop',(.24,.29,.27)));backdrop.finish('Render_background');
 world=bpy.data.worlds.new('Daylight');bpy.context.scene.world=world;world.use_nodes=True
 nodes=world.node_tree.nodes;sky=nodes.new('ShaderNodeTexSky');sky.sky_type='NISHITA';sky.sun_elevation=math.radians(40);sky.sun_rotation=math.radians(135);sky.altitude=.1

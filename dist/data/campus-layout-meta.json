@@ -23,7 +23,8 @@
     "south": 199.20999999999998,
     "north": 151.63
   },
-  "northRoadZ": 145.63,
+  "factoryYardNorthZ": 151.98,
+  "southResidentialMarginZ": 145.63,
   "rowSouth": 212.81,
   "gateX": -32.6,
   "fanyangZ": 240

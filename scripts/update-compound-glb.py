@@ -194,7 +194,7 @@ def main():
         if 'bufferView' in image:
             image['bufferView'] = view_remap[image['bufferView']]
     gltf['buffers'][0]['byteLength'] = len(packed)
-    gltf['asset'].setdefault('extras', {})['compoundLayout'] = 'photo-guided factory courtyard 2026-10-07'
+    gltf['asset'].setdefault('extras', {})['compoundLayout'] = 'photo-guided factory courtyard; no through road to residential buildings'
 
     encoded = json.dumps(gltf, separators=(',', ':'), ensure_ascii=False).encode('utf8')
     encoded += b' ' * (-len(encoded) % 4)
@@ -212,6 +212,7 @@ def main():
     manifest['compoundLayout'] = dict(factoryEastDoors=2,
                                       factorySouthDoors=0,
                                       factoryYardSouthwestGate='connects to equipment building',
+                                      factoryResidentialGap='no through road or simulated people and vehicles',
                                       sharedArea='厂房、装备专业化大楼及住宅区',
                                       separateArea='国际部独立办公区',
                                       internationalNorthGate='connects to residential area',

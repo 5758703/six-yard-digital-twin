@@ -125,18 +125,19 @@ intl_south = iz + idp / 2
 equip_south = ez + ed / 2
 factory_south = fz + fd / 2
 row_south = max(intl_south, equip_south, factory_south)
-north_road_z = min(iz - idp / 2, ez - ed / 2, fz - fd / 2) - 6
+south_residential_margin_z = min(iz - idp / 2, ez - ed / 2, fz - fd / 2) - 6
+factory_yard_north_z = round(fz - fd / 2 + .25, 2)
 # 国际部楼中轴直连范阳中路（仅楼南至干道，不穿楼体、无丁字展宽）。
 GATE_X = round(ix, 1)
 roads.append(dict(id='南门引路', name='南门引路', points=[[GATE_X, round(intl_south, 1)], [GATE_X, FANYANG_Z]], width=10,
                   source='用户要求：国际部大楼中间直连范阳中路'))
 # The clipped spur would run through the independent office enclosure.
 roads = [road for road in roads if road['id'] != 'osm-1560982336']
-# Factory east doors open onto the lane shared with the equipment building.
-# Its northern end stops short of the residential footprint.
+# Factory east doors open onto the concrete yard. The paved yard starts at the
+# factory wall; the gap to the residential buildings is not a through road.
 roads.append(dict(id='shared-yard-service', name='共用院区通道',
-                  points=[[56.5, round(north_road_z, 1)], [56.5, 220]], width=7,
-                  source='用户确认：厂房、装备楼与住宅区同属一个院区；通道为近似布局'))
+                  points=[[56.5, factory_yard_north_z], [56.5, 220]], width=7,
+                  source='用户确认：厂房与装备楼院内为混凝土地坪；住宅楼之间无贯通大路'))
 roads.append(dict(id='factory-yard-connector', name='厂房院子西南联络通道',
                   points=[[34, 225], [34, 219], [56.5, 219], [65, 219], [65, 202]], width=5,
                   source='用户确认：厂房院子西南出入口与装备专业化大楼相连；通道为示意布局'))
@@ -163,7 +164,7 @@ def blocked(x, z):
     # 楼中轴南门引路走廊
     if abs(x - GATE_X) < 6 and intl_south - 2 <= z <= FANYANG_Z + 2:
         return True
-    if abs(z - north_road_z) < 5 and -100 <= x <= 180:
+    if abs(z - south_residential_margin_z) < 5 and -100 <= x <= 180:
         return True
     return False
 
@@ -177,7 +178,7 @@ for rx in [-299, -282, -95, -70, 151, 183, 295, 311]:
     for z in range(-230, 256, 15):
         if clear(rx, z):
             trees.append([rx, z])
-for z in [-232, -211, 0, 24, int(north_road_z)]:
+for z in [-232, -211, 0, 24, int(south_residential_margin_z)]:
     for x in range(-280, 296, 17):
         if clear(x, z):
             trees.append([x, z])
@@ -219,6 +220,19 @@ areas = [
          source='用户确认：国际部大楼为单独隔离的办公大楼；围界位置与门宽为示意'),
 ]
 
+traffic_exclusion_zones = [dict(
+    id='factory-residential-gap', west=20, east=158, north=140, south=152,
+    source='用户确认：厂房、装备专业化大楼与住宅楼之间无大路，不布置模拟行人或车辆',
+), dict(
+    id='international-west-side', west=-270, east=round(ix - iw / 2, 2),
+    north=149, south=225,
+    source='用户要求：国际部大楼左侧及西侧空地不布置模拟行人或车辆，包括停放车辆',
+), dict(
+    id='international-entrance-left', west=round(ix - iw / 2, 2),
+    east=round(GATE_X - 6, 2), north=round(intl_south, 2), south=225,
+    source='用户要求：国际部大楼正门左侧不布置模拟行人或车辆',
+)]
+
 # Photo taken from a residential building north of the factory, looking south.
 # Object positions and dimensions are visual estimates within the OSM building gap.
 factory_courtyard = dict(
@@ -243,8 +257,9 @@ data = dict(
     trees=trees,
     greens=greens,
     areas=areas,
+    trafficExclusionZones=traffic_exclusion_zones,
     factoryCourtyard=factory_courtyard,
-    annotation='建筑与园路底图为 OSM 2026-09-21；厂房弧形蓝色屋顶、浅色墙板、营房车和混凝土院子依据用户实拍照片；厂房仅有两个东门，院子西南出入口连通装备楼；厂房、装备楼及住宅区同属共用院区；国际部大楼独立围合，北侧出入口连接住宅区。',
+    annotation='建筑与园路底图为 OSM 2026-09-21；厂房弧形蓝色屋顶、浅色墙板、营房车和混凝土院子依据用户实拍照片；厂房与装备楼同住宅楼之间无贯通大路及模拟人车；厂房仅有两个东门，院子西南出入口连通装备楼；厂房、装备楼及住宅区同属共用院区；国际部大楼独立围合，北侧出入口连接住宅区，西侧与正门左侧不布置模拟人车。',
     modelLimitations='地理底图来源为 OSM 2026-09-21；层数、外立面、绿化树种属于近似重建，不是测绘成果。',
 )
 (R / 'public/data/campus.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf8')
@@ -253,7 +268,8 @@ meta = dict(
     intl={'x': ix, 'z': iz, 'w': iw, 'd': idp, 'south': intl_south, 'north': iz - idp / 2},
     factory={'x': fx, 'z': fz, 'w': fw, 'd': fd, 'south': factory_south, 'north': fz - fd / 2},
     equipment={'x': ex, 'z': ez, 'w': ew, 'd': ed, 'south': equip_south, 'north': ez - ed / 2},
-    northRoadZ=north_road_z,
+    factoryYardNorthZ=factory_yard_north_z,
+    southResidentialMarginZ=south_residential_margin_z,
     rowSouth=row_south,
     gateX=GATE_X,
     fanyangZ=FANYANG_Z,

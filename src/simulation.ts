@@ -4,7 +4,7 @@ export type ActorMode = 'walk' | 'bike' | 'ebike';
 export type Actor = {id:string;x:number;z:number;angle:number;parked:boolean;slot:number;phase:number;mode?:ActorMode};
 export type AlertRecord = {id:string;buildingId:string;at:number;title:string;level:'warning'|'critical';ackAt?:number;resolvedAt?:number};
 export const DURATION=900;
-export const PARKED_COUNT=54;
+export const PARKED_COUNT=10;
 /** Fewer circulating cars inside the campus grid. */
 export const CAMPUS_MOVING=8;
 /** More traffic on 范阳中路. */
@@ -17,12 +17,20 @@ export const PEOPLE_COUNT=WALK_COUNT+BIKE_COUNT+EBIKE_COUNT;
 export const ACTOR_CAR_COUNT=PARKED_COUNT+MOVING_COUNT;
 const LANE=2.8;
 const FANYANG_Z=240;
-const NORTH_Z=146;
+// The road east of the spur is north of the first housing row. Its western
+// approach stays at the old alignment, outside the factory/residential gap.
+const WEST_NORTH_Z=146;
+const EAST_NORTH_Z=121;
 const EAST_X=166;
 const WEST_X=-82;
 const SPUR_X=16;
 const GATE_X=-32.6;
 const INT_SOUTH=200;
+function inTrafficExclusion(x:number,z:number){return campus.trafficExclusionZones.some(zone=>x>zone.west&&x<zone.east&&z>zone.north&&z<zone.south);}
+function insideFootprint(x:number,z:number,polygon:number[][]){let inside=false;for(let i=0,j=polygon.length-1;i<polygon.length;j=i++){if((polygon[i][1]>z)!==(polygon[j][1]>z)&&x<(polygon[j][0]-polygon[i][0])*(z-polygon[i][1])/(polygon[j][1]-polygon[i][1])+polygon[i][0])inside=!inside;}return inside;}
+const usableParking=campus.parking.map((p,slot)=>({p,slot})).filter(({p})=>
+  !inTrafficExclusion(p.x,p.z)&&!campus.buildings.some(b=>insideFootprint(p.x,p.z,b.polygon)));
+const circulatingParking=usableParking.filter(({p})=>p.x<SPUR_X).slice(PARKED_COUNT);
 export function advanceTime(time:number,dt:number,playing:boolean,speed:number){return Math.min(DURATION,Math.max(0,time+(playing?dt*speed:0)));}
 export function pathLength(points:Point[]){return points.slice(1).reduce((s,p,i)=>s+Math.hypot(p[0]-points[i][0],p[1]-points[i][1]),0);}
 export function samplePath(points:Point[],distance:number){
@@ -44,23 +52,21 @@ export function lanePath(points:Point[],side:1|-1=1,offset=LANE):Point[]{
   });
 }
 const roadLoops:Point[][]=[
-  [[EAST_X,NORTH_Z],[EAST_X,-225],[WEST_X,-225],[WEST_X,NORTH_Z],[EAST_X,NORTH_Z]],
-  [[WEST_X,NORTH_Z],[WEST_X,-225],[EAST_X,-225],[EAST_X,NORTH_Z],[WEST_X,NORTH_Z]],
-  [[EAST_X,NORTH_Z],[EAST_X,27],[WEST_X,27],[WEST_X,NORTH_Z],[EAST_X,NORTH_Z]],
-  [[WEST_X,NORTH_Z],[WEST_X,27],[EAST_X,27],[EAST_X,NORTH_Z],[WEST_X,NORTH_Z]],
-  // 南门：先沿楼西到楼南，再中轴直连范阳中路（闭合时不出现斜穿楼体的对角线）
-  [[WEST_X,NORTH_Z],[WEST_X,INT_SOUTH],[GATE_X,INT_SOUTH],[GATE_X,FANYANG_Z],[GATE_X,INT_SOUTH],[WEST_X,INT_SOUTH],[WEST_X,NORTH_Z]],
-  [[WEST_X,27],[WEST_X,INT_SOUTH],[GATE_X,INT_SOUTH],[GATE_X,FANYANG_Z],[GATE_X,INT_SOUTH],[WEST_X,INT_SOUTH],[WEST_X,27]],
+  [[WEST_X,WEST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[EAST_X,EAST_NORTH_Z],[EAST_X,-225],[WEST_X,-225],[WEST_X,WEST_NORTH_Z]],
+  [[WEST_X,WEST_NORTH_Z],[WEST_X,-225],[EAST_X,-225],[EAST_X,EAST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[WEST_X,WEST_NORTH_Z]],
+  [[WEST_X,WEST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[EAST_X,EAST_NORTH_Z],[EAST_X,27],[WEST_X,27],[WEST_X,WEST_NORTH_Z]],
+  [[WEST_X,WEST_NORTH_Z],[WEST_X,27],[EAST_X,27],[EAST_X,EAST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[WEST_X,WEST_NORTH_Z]],
+  // Keep the last two car circuits in the residential grid; the independent
+  // office's west side and entrance-left apron carry no simulated traffic.
+  [[WEST_X,WEST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[EAST_X,EAST_NORTH_Z],[EAST_X,27],[WEST_X,27],[WEST_X,WEST_NORTH_Z]],
+  [[WEST_X,WEST_NORTH_Z],[WEST_X,27],[EAST_X,27],[EAST_X,EAST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[WEST_X,WEST_NORTH_Z]],
 ];
 function campusRoute(i:number):Point[]{
-  const slot=PARKED_COUNT+(i%(campus.parking.length-PARKED_COUNT));
-  const p=campus.parking[slot];
+  const {p}=circulatingParking[i%circulatingParking.length];
   const loop=roadLoops[i%roadLoops.length];
-  const usesGate=loop.some(([x,z])=>Math.abs(x-GATE_X)<1&&z>=INT_SOUTH-1);
-  const gate:Point=usesGate?[WEST_X,NORTH_Z]:loop[0][0]>50?[EAST_X,NORTH_Z]:loop[0][0]>0?[SPUR_X,NORTH_Z]:[WEST_X,NORTH_Z];
-  const center:Point[]=[[p.x,p.z],[p.x,NORTH_Z],gate,...loop,gate,[p.x,NORTH_Z],[p.x,p.z]];
-  if(!usesGate)return [[p.x,p.z],...lanePath(center.slice(1,-1),1,LANE),[p.x,p.z]];
-  return center;
+  const gate:Point=[WEST_X,WEST_NORTH_Z];
+  const center:Point[]=[[p.x,p.z],[p.x,WEST_NORTH_Z],gate,...loop,gate,[p.x,WEST_NORTH_Z],[p.x,p.z]];
+  return [[p.x,p.z],...lanePath(center.slice(1,-1),1,LANE),[p.x,p.z]];
 }
 const fanyangRoutes:Point[][]=Array.from({length:FANYANG_MOVING},(_,i)=>{
   const span=280+(i%3)*20;
@@ -75,24 +81,24 @@ export const vehicleRoutes:Point[][]=[
 ];
 const vehicleLengths=vehicleRoutes.map(pathLength);
 const walkRoutes:Point[][]=[
-  [[WEST_X+4,NORTH_Z],[EAST_X-4,NORTH_Z],[EAST_X-4,-225],[WEST_X+4,-225],[WEST_X+4,NORTH_Z]],
+  [[WEST_X+4,WEST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[EAST_X-4,EAST_NORTH_Z],[EAST_X-4,-225],[WEST_X+4,-225],[WEST_X+4,WEST_NORTH_Z]],
   [[WEST_X,27],[EAST_X,27],[EAST_X,20],[WEST_X,20],[WEST_X,27]],
   [[-190,35],[-130,35],[-130,90],[-190,90],[-190,35]],
-  [[WEST_X,NORTH_Z],[EAST_X,NORTH_Z],[EAST_X,-225],[WEST_X,-225],[WEST_X,NORTH_Z]],
+  [[WEST_X,WEST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[EAST_X,EAST_NORTH_Z],[EAST_X,-225],[WEST_X,-225],[WEST_X,WEST_NORTH_Z]],
   [[-185,40],[-125,40],[-125,90],[-185,90],[-185,40]],
-  [[SPUR_X,NORTH_Z],[WEST_X,NORTH_Z],[WEST_X,27],[SPUR_X,27],[SPUR_X,NORTH_Z]],
-  [[SPUR_X,NORTH_Z],[EAST_X,NORTH_Z],[EAST_X,27],[SPUR_X,27],[SPUR_X,NORTH_Z]],
-  // 南门：楼中轴南缘直连范阳中路，经楼西南侧回院（不穿楼）
-  [[GATE_X-2.5,FANYANG_Z],[GATE_X-2.5,INT_SOUTH],[WEST_X,INT_SOUTH],[WEST_X,NORTH_Z],[WEST_X,INT_SOUTH],[GATE_X-2.5,INT_SOUTH],[GATE_X-2.5,FANYANG_Z]],
-  [[GATE_X+2.5,FANYANG_Z],[GATE_X+2.5,INT_SOUTH],[WEST_X,INT_SOUTH],[WEST_X,27],[WEST_X,INT_SOUTH],[GATE_X+2.5,INT_SOUTH],[GATE_X+2.5,FANYANG_Z]],
+  [[SPUR_X,WEST_NORTH_Z],[WEST_X,WEST_NORTH_Z],[WEST_X,27],[SPUR_X,27],[SPUR_X,WEST_NORTH_Z]],
+  [[SPUR_X,EAST_NORTH_Z],[EAST_X,EAST_NORTH_Z],[EAST_X,27],[SPUR_X,27],[SPUR_X,EAST_NORTH_Z]],
+  // Visitors use the gate's central/east apron and the southern courtyard.
+  [[GATE_X-2.5,FANYANG_Z],[GATE_X-2.5,INT_SOUTH],[GATE_X-2.5,220],[155,220],[155,225],[GATE_X-2.5,225],[GATE_X-2.5,FANYANG_Z]],
+  [[GATE_X+2.5,FANYANG_Z],[GATE_X+2.5,INT_SOUTH],[GATE_X+2.5,220],[150,220],[150,225],[GATE_X+2.5,225],[GATE_X+2.5,FANYANG_Z]],
 ];
 const walkLengths=walkRoutes.map(pathLength);
 const cycleRoutes:Point[][]=[
   ...walkRoutes,
   lanePath([[-280,FANYANG_Z],[300,FANYANG_Z]],1,12),
   lanePath([[300,FANYANG_Z],[-280,FANYANG_Z]],1,12),
-  [[GATE_X+2.5,FANYANG_Z],[GATE_X+2.5,INT_SOUTH],[WEST_X,INT_SOUTH],[WEST_X,NORTH_Z],[EAST_X-4,NORTH_Z],[WEST_X,NORTH_Z],[WEST_X,INT_SOUTH],[GATE_X+2.5,INT_SOUTH],[GATE_X+2.5,FANYANG_Z]],
-  [[WEST_X+4,NORTH_Z],[EAST_X-4,NORTH_Z],[EAST_X-4,-225],[WEST_X+4,-225],[WEST_X+4,NORTH_Z]],
+  [[GATE_X+2.5,FANYANG_Z],[GATE_X+2.5,INT_SOUTH],[GATE_X+2.5,220],[150,220],[150,225],[GATE_X+2.5,225],[GATE_X+2.5,FANYANG_Z]],
+  [[WEST_X+4,WEST_NORTH_Z],[SPUR_X,WEST_NORTH_Z],[SPUR_X,EAST_NORTH_Z],[EAST_X-4,EAST_NORTH_Z],[EAST_X-4,-225],[WEST_X+4,-225],[WEST_X+4,WEST_NORTH_Z]],
 ];
 const cycleLengths=cycleRoutes.map(pathLength);
 function personActor(id:string,mode:ActorMode,routeIndex:number,speed:number,time:number,seed:number):Actor{
@@ -104,7 +110,7 @@ function personActor(id:string,mode:ActorMode,routeIndex:number,speed:number,tim
 }
 export function sampleWorld(time:number){
   const t=Math.max(0,Math.min(DURATION,time));
-  const cars:Actor[]=campus.parking.slice(0,PARKED_COUNT).map((p,i)=>({id:`V${i+1}`,x:p.x,z:p.z,angle:0,parked:true,slot:i,phase:0}));
+  const cars:Actor[]=usableParking.slice(0,PARKED_COUNT).map(({p,slot},i)=>({id:`V${i+1}`,x:p.x,z:p.z,angle:0,parked:true,slot,phase:0}));
   vehicleRoutes.forEach((route,i)=>{
     const onFanyang=i>=CAMPUS_MOVING;
     const dwell=onFanyang?0:8+i*3;
@@ -113,7 +119,7 @@ export function sampleWorld(time:number){
     const phase=(t+i*17)%period;
     const parked=!onFanyang&&phase<dwell;
     const p=samplePath(route,parked?0:(phase-dwell)*speed);
-    cars.push({id:`V${PARKED_COUNT+1+i}`,...p,parked,slot:onFanyang?-1:PARKED_COUNT+(i%(campus.parking.length-PARKED_COUNT)),phase});
+    cars.push({id:`V${PARKED_COUNT+1+i}`,...p,parked,slot:onFanyang?-1:circulatingParking[i%circulatingParking.length].slot,phase});
   });
   const people:Actor[]=[
     ...Array.from({length:WALK_COUNT},(_,i)=>personActor(`P${i+1}`,'walk',i,1.05+(i%5)*.12,t,i*29)),
