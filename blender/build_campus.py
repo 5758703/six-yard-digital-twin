@@ -10,6 +10,7 @@ from photo_facades import build_photo_office
 from residential_facades import build_residential, make_textures
 from plane_trees import build_plane_trees
 from campus_compounds import build_factory, build_factory_courtyard, build_independent_boundary, build_factory_wire_fence, build_north_walkway, build_yard_connector
+from campus_ground import build_ground
 OUT=ROOT/'public/models'; OUT.mkdir(parents=True,exist_ok=True)
 RENDERS=ROOT/'renders'; RENDERS.mkdir(exist_ok=True)
 C=json.loads((ROOT/'public/data/campus.json').read_text(encoding='utf8'))
@@ -173,43 +174,8 @@ def building(b):
     ob=m.finish(b['id'],texture_uv=b['type']=='residential');ob['buildingId']=b['id'];return ob
 print('Building footprints',flush=True)
 for b in C['buildings']:building(b)
-ground=Mesh();ground.box(0,0,-2.5,680,585,5,concrete);ground.box(0,0,.02,665,570,.12,grass)
-ground.box(-187,155,.12,160,157,.16,soil)
-# Yard pocket between 国际部 and 厂房 / 装备楼 (not a south E–W road).
-ground.box(40,198,.11,36,50,.14,soil)
-for g in C.get('greens',[]):
-    ground.box(g['x'],g['z'],.22,g['w'],g['d'],.14,grass)
-def clip(a,b):
-    # Match campus extent [-330,-285,340,285] so southern city roads (范阳中路) stay continuous.
-    dx,dz=b[0]-a[0],b[1]-a[1];lo,hi=0.,1.
-    for p,q in [(-dx,a[0]+330),(dx,340-a[0]),(-dz,a[1]+285),(dz,285-a[1])]:
-        if p==0:
-            if q<0:return None
-        elif p<0:lo=max(lo,q/p)
-        else:hi=min(hi,q/p)
-    if lo>hi:return None
-    return [a[0]+lo*dx,a[1]+lo*dz],[a[0]+hi*dx,a[1]+hi*dz]
-def strip(m,a,b,width,y,mat):
-    dx,dz=b[0]-a[0],b[1]-a[1];l=math.hypot(dx,dz)
-    if l<.01:return
-    nx,nz=-dz/l*width/2,dx/l*width/2
-    m.shape([(a[0]+nx,y,a[1]+nz),(a[0]-nx,y,a[1]-nz),(b[0]-nx,y,b[1]-nz),(b[0]+nx,y,b[1]+nz)],[(3,2,1,0)],mat)
-for road_index,road in enumerate(C['roads']):
-    if road['id'] in ('international-north-link','shared-yard-service','factory-yard-connector'):continue
-    for segment_index,(a,b) in enumerate(zip(road['points'],road['points'][1:])):
-        pair=clip(a,b)
-        if not pair:continue
-        y=.19+road_index*.01+segment_index*.0002
-        a,b=pair;strip(ground,a,b,road['width']+4,y-.035,concrete);strip(ground,a,b,road['width'],y,asphalt)
-        length=math.dist(a,b)
-        for s in range(0,int(length),12):
-            p=[a[i]+(b[i]-a[i])*s/length for i in [0,1]];q=[a[i]+(b[i]-a[i])*min(s+5,length)/length for i in [0,1]];strip(ground,p,q,.20,y+.01,line)
-for p in C['parking']:
-    x,z=p['x'],p['z'];ground.box(x,z,.2,3.3,6,.18,asphalt)
-    for dx in [-1.6,1.6]:ground.box(x+dx,z,.31,.10,5.8,.035,line)
-    ground.box(x,z-2.9,.31,3.3,.12,.035,line);ground.box(x,z-2.15,.42,1.4,.3,.2,concrete)
-for x in [-82,165]:
-    for i in range(10):ground.box(x-6+i*1.3,253,.5,.68,7,.045,line)
+ground=Mesh()
+build_ground(ground,C,dict(concrete=concrete,grass=grass,soil=soil,asphalt=asphalt,line=line))
 ground.finish('Ground_and_roads')
 courtyard=Mesh()
 build_factory_courtyard(courtyard,C['factoryCourtyard'],dict(concrete=concrete,glass=glass,frame=frame,

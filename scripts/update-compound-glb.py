@@ -1,4 +1,4 @@
-"""Update factory east doors and the two precincts in campus.glb without Blender."""
+"""Update shared ground, factory and precinct meshes in campus.glb without Blender."""
 import array
 import copy
 import json
@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT / 'blender'))
 from campus_compounds import (build_factory, build_factory_courtyard, build_independent_boundary, build_service_lane,
                               build_factory_wire_fence, build_yard_connector, build_north_walkway,
                               cover_old_yard_overlap)
+from campus_ground import build_ground
 
 Geometry = runpy.run_path(str(ROOT / 'scripts/update-residential-glb.py'))['Geometry']
 PATH = ROOT / 'public/models/campus.glb'
@@ -71,7 +72,7 @@ def main():
                 ivory=material['Office limestone'], plaster=material['Warm limestone plaster'],
                 blue=material['Standing seam blue metal'], steel=material['Street furniture'],
                 asphalt=material['Asphalt'], line=material['Road marking'],
-                grass=material['Grass'])
+                grass=material['Grass'], soil=material['Bare ground'])
     mats.update(factory_wall=colored('Factory aged white panels', (.73,.74,.70)),
                 factory_joint=colored('Factory panel seams', (.40,.43,.42)),
                 factory_stain=colored('Factory weather stains', (.57,.56,.51)),
@@ -109,6 +110,11 @@ def main():
             gltf['scenes'][gltf.get('scene', 0)]['nodes'].append(len(gltf['nodes']) - 1)
         node['mesh'] = len(gltf['meshes']) - 1
         node.setdefault('extras', {}).update(extras)
+
+    ground_mesh = Geometry()
+    build_ground(ground_mesh, DATA, mats)
+    replace_mesh('Ground_and_roads', ground_mesh,
+                 dict(roadSurface='joined mitered segments with smooth asphalt junctions'))
 
     factory = next(b for b in DATA['buildings'] if b['id'] == 'factory-1')
     factory_mesh = Geometry()
@@ -234,7 +240,7 @@ def main():
                                          blueCrateGroups=len(DATA['factoryCourtyard']['crateStacks']),
                                          source=DATA['factoryCourtyard']['source'])
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
-    print(f'Updated photo-guided factory and courtyard: {len(output):,} bytes')
+    print(f'Updated joined roads, factory and courtyard: {len(output):,} bytes')
 
 
 if __name__ == '__main__':
