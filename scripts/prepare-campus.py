@@ -138,9 +138,9 @@ roads = [road for road in roads if road['id'] != 'osm-1560982336']
 roads.append(dict(id='shared-yard-service', name='共用院区通道',
                   points=[[56.5, factory_yard_north_z], [56.5, 220]], width=7,
                   source='用户确认：厂房与装备楼院内为混凝土地坪；住宅楼之间无贯通大路'))
-roads.append(dict(id='factory-yard-connector', name='厂房院子西南联络通道',
-                  points=[[34, 225], [34, 219], [56.5, 219], [65, 219], [65, 202]], width=5,
-                  source='用户确认：厂房院子西南出入口与装备专业化大楼相连；通道为示意布局'))
+roads.append(dict(id='factory-yard-connector', name='厂房院内联络通道',
+                  points=[[34, 219], [56.5, 219], [65, 219], [65, 202]], width=5,
+                  source='用户确认：厂房南侧围栏封闭；院内通道连接厂房东侧与装备楼西侧'))
 roads.append(dict(id='international-north-link', name='国际部北侧出入口',
                   points=[[-82, 147], [-82, 100]], width=4,
                   source='用户确认：国际部北侧出入口连接住宅小区；步行通道为示意布局'))
@@ -211,13 +211,13 @@ for row_x, side in [(151, -1), (183, 1)]:
 areas = [
     dict(id='shared-yard', name='六号院共用院区',
          buildingIds=[b['id'] for b in buildings if b['areaId'] == 'shared-yard'],
-         factoryYardGate=dict(side='southwest', x=34, z=221, width=10, connectsTo='equipment'),
          factoryFence=dict(
-             segments=[[[13, 149], [67, 149]], [[21.7, 149], [21.7, 221]],
-                       [[21.7, 221], [98, 221]], [[66, 202], [66, 221]],
-                       [[98, 212], [98, 221]]],
-             pedestrianGate=dict(x=66, z=211, width=2.2, side='east'),
-             source='用户提供的俯视截图红线与小门标注；围栏折点与门宽按厂房轮廓近似定位'),
+             segments=[[[13, 149], [67, 149]], [[21.5, 149], [21.5, 225]],
+                       [[21.5, 225], [158, 225]]],
+             pedestrianGate=dict(x=66, z=225, width=2.2, side='south'),
+             equipmentSouthGate=dict(x=round(ex, 2), z=225, width=14,
+                                     connectsTo='equipment-south-entrance'),
+             source='用户俯视截图及后续确认：南侧围栏与国际部南侧边界同处东西直线，厂房南侧封闭、装备楼南门留通道并向东续接；位置与门宽为近似'),
          source='用户确认：厂房、装备专业化大楼和住宅区属于同一院区；厂房周边为铁丝围栏'),
     dict(id='international-office', name='国际部独立办公区', buildingIds=['international'],
          boundary=dict(west=-102, east=21.5, north=147, south=225,
@@ -265,7 +265,7 @@ data = dict(
     areas=areas,
     trafficExclusionZones=traffic_exclusion_zones,
     factoryCourtyard=factory_courtyard,
-    annotation='建筑与园路底图为 OSM 2026-09-21；厂房弧形蓝色屋顶、浅色墙板、营房车和混凝土院子依据用户实拍照片；厂房周边铁丝围栏及东南侧小门依据用户俯视截图红线；厂房与装备楼同住宅楼之间无贯通大路及模拟人车；厂房仅有两个东门、没有南门，院子西南出入口连通装备楼；厂房、装备楼及住宅区同属共用院区；国际部大楼独立围合，北侧出入口连接住宅区，西侧与正门左侧不布置模拟人车。',
+    annotation='建筑与园路底图为 OSM 2026-09-21；厂房弧形蓝色屋顶、浅色墙板、营房车和混凝土院子依据用户实拍照片；厂房仅有两个东门，南墙无门并以铁丝围栏封闭；厂房与装备楼南侧围栏同国际部南侧边界处于东西直线，装备楼南门留通道且东侧围栏续接；厂房与装备楼同住宅楼之间无贯通大路及模拟人车；厂房、装备楼及住宅区同属共用院区；国际部大楼独立围合，北侧出入口连接住宅区，西侧与正门左侧不布置模拟人车。',
     modelLimitations='地理底图来源为 OSM 2026-09-21；层数、外立面、绿化树种属于近似重建，不是测绘成果。',
 )
 (R / 'public/data/campus.json').write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf8')

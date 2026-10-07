@@ -70,10 +70,9 @@ def build_factory(mesh, building, mats):
         else:
             mesh.box(east_x + .27, zz - 1.35, 5.3, .42, .7, .38, mats['steel'])
             mesh.box(east_x + .18, zz + 1.5, 1.05, .4, .72, .54, mats['frame'])
-    # Simple dark high windows on the end walls.
-    for end in (-1, 1):
-        for xx in (x - w * .28, x, x + w * .28):
-            mesh.box(xx, z + end * (d / 2 + .06), 4.2, 1.1, .1, 1.55, mats['glass'])
+    # The south end is a continuous wall with no door-like recess or glazing.
+    for xx in (x - w * .28, x, x + w * .28):
+        mesh.box(xx, z - d / 2 - .06, 4.2, 1.1, .1, 1.55, mats['glass'])
 
 
 def build_factory_courtyard(mesh, feature, mats):
@@ -198,8 +197,8 @@ def build_service_lane(mesh, road, mats):
     mesh.box(x, (north + south) / 2, .215, road['width'], south - north, .05, mats['concrete'])
 
 
-def build_factory_wire_fence(mesh, fence, yard_gate, mats):
-    """Photo-marked chain-link runs, a south-west passage and an east wicket."""
+def build_factory_wire_fence(mesh, fence, mats):
+    """Straight south fence aligned with the office boundary and two gates."""
     wicket = fence['pedestrianGate']
 
     def point(along, height, fixed, horizontal):
@@ -248,12 +247,12 @@ def build_factory_wire_fence(mesh, fence, yard_gate, mats):
         fixed = az if horizontal else ax
         start, end = sorted((ax, bx) if horizontal else (az, bz))
         openings = []
-        if horizontal and abs(fixed - yard_gate['z']) < .01:
-            openings.append((yard_gate['x'] - yard_gate['width'] / 2,
-                             yard_gate['x'] + yard_gate['width'] / 2))
-        if not horizontal and abs(fixed - wicket['x']) < .01:
-            openings.append((wicket['z'] - wicket['width'] / 2,
-                             wicket['z'] + wicket['width'] / 2))
+        if horizontal and abs(fixed - wicket['z']) < .01:
+            openings.append((wicket['x'] - wicket['width'] / 2,
+                             wicket['x'] + wicket['width'] / 2))
+            equipment_gate = fence['equipmentSouthGate']
+            openings.append((equipment_gate['x'] - equipment_gate['width'] / 2,
+                             equipment_gate['x'] + equipment_gate['width'] / 2))
         cursor = start
         for opening_start, opening_end in openings:
             panel(cursor, opening_start, fixed, horizontal)
@@ -262,12 +261,11 @@ def build_factory_wire_fence(mesh, fence, yard_gate, mats):
             cursor = opening_end
         panel(cursor, end, fixed, horizontal)
 
-    # The narrow gate is shown swung toward the equipment yard, leaving its
-    # opening visible from the same overhead angle as the user's annotation.
-    hinge_z = wicket['z'] - wicket['width'] / 2
-    panel(wicket['x'] + .16, wicket['x'] + wicket['width'] - .12,
-          hinge_z, True)
-    mesh.box(wicket['x'] + .08, hinge_z, 1.18, .16, .16, 1.8, mats['steel'])
+    # The narrow leaf swings north into the yard, leaving the opening legible.
+    hinge_x = wicket['x'] - wicket['width'] / 2
+    panel(wicket['z'] - wicket['width'] + .12, wicket['z'] - .16,
+          hinge_x, False)
+    mesh.box(hinge_x, wicket['z'] - .08, 1.18, .16, .16, 1.8, mats['steel'])
 
 
 def build_yard_connector(mesh, road, mats):

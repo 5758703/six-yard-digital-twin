@@ -226,7 +226,7 @@ boundary=Mesh()
 build_independent_boundary(boundary,C['areas'][1]['boundary'],dict(concrete=concrete,steel=steel,ivory=ivory))
 boundary.finish('International_boundary')
 yard_fence=Mesh()
-build_factory_wire_fence(yard_fence,C['areas'][0]['factoryFence'],C['areas'][0]['factoryYardGate'],
+build_factory_wire_fence(yard_fence,C['areas'][0]['factoryFence'],
                          dict(steel=steel,wire=factory_mats['wire']))
 yard_fence.finish('Factory_wire_fence')
 print('Growing plane trees',flush=True)

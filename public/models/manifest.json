@@ -16,13 +16,19 @@
   "compoundLayout": {
     "factoryEastDoors": 2,
     "factorySouthDoors": 0,
-    "factoryYardSouthwestGate": "connects to equipment building",
-    "factoryWireFenceSegments": 5,
+    "factorySouthFenceZ": 225,
+    "factoryWireFenceSegments": 3,
     "factoryPedestrianGate": {
       "x": 66,
-      "z": 211,
+      "z": 225,
       "width": 2.2,
-      "side": "east"
+      "side": "south"
+    },
+    "equipmentSouthGate": {
+      "x": 109.19,
+      "z": 225,
+      "width": 14,
+      "connectsTo": "equipment-south-entrance"
     },
     "factoryResidentialGap": "no through road or simulated people and vehicles",
     "sharedArea": "厂房、装备专业化大楼及住宅区",

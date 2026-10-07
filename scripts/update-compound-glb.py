@@ -135,12 +135,12 @@ def main():
         if node.get('name') == 'Factory_yard_south_gate':
             node['name'] = 'Factory_wire_fence'
     factory_fence_mesh = Geometry()
-    build_factory_wire_fence(factory_fence_mesh, shared_area['factoryFence'],
-                             shared_area['factoryYardGate'], mats)
+    build_factory_wire_fence(factory_fence_mesh, shared_area['factoryFence'], mats)
     replace_mesh('Factory_wire_fence', factory_fence_mesh,
-                 dict(areaId='shared-yard', connectsTo='equipment',
+                 dict(areaId='shared-yard', connectsTo='equipment-south-entrance',
                       source=shared_area['factoryFence']['source'],
                       pedestrianGate=shared_area['factoryFence']['pedestrianGate'],
+                      equipmentSouthGate=shared_area['factoryFence']['equipmentSouthGate'],
                       fenceSegments=len(shared_area['factoryFence']['segments'])))
 
     road = next(r for r in DATA['roads'] if r['id'] == 'shared-yard-service')
@@ -202,7 +202,7 @@ def main():
         if 'bufferView' in image:
             image['bufferView'] = view_remap[image['bufferView']]
     gltf['buffers'][0]['byteLength'] = len(packed)
-    gltf['asset'].setdefault('extras', {})['compoundLayout'] = 'photo-guided factory courtyard; no through road to residential buildings'
+    gltf['asset'].setdefault('extras', {})['compoundLayout'] = 'photo-guided factory courtyard; straight south chain-link fence aligned to the office boundary'
 
     encoded = json.dumps(gltf, separators=(',', ':'), ensure_ascii=False).encode('utf8')
     encoded += b' ' * (-len(encoded) % 4)
@@ -219,9 +219,10 @@ def main():
     manifest = json.loads(manifest_path.read_text(encoding='utf8'))
     manifest['compoundLayout'] = dict(factoryEastDoors=2,
                                       factorySouthDoors=0,
-                                      factoryYardSouthwestGate='connects to equipment building',
+                                      factorySouthFenceZ=225,
                                       factoryWireFenceSegments=len(shared_area['factoryFence']['segments']),
                                       factoryPedestrianGate=shared_area['factoryFence']['pedestrianGate'],
+                                      equipmentSouthGate=shared_area['factoryFence']['equipmentSouthGate'],
                                       factoryResidentialGap='no through road or simulated people and vehicles',
                                       sharedArea='厂房、装备专业化大楼及住宅区',
                                       separateArea='国际部独立办公区',
