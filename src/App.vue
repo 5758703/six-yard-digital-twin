@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import { computed,onMounted,onBeforeUnmount,ref,watch } from 'vue';
-import { Box,Search,Layers,Building2,Car,Users,Activity,Sun,Moon,Maximize2,RotateCcw,MapPin,ChevronRight,Play,Pause,SkipBack,AlertTriangle,X,Check,Clock3,Navigation,LocateFixed,Info,TreePine,Route,PanelLeftClose,PanelLeftOpen,PanelRightClose,PanelRightOpen,Radio,ArrowUpRight,Zap,ParkingCircle,CheckCheck,Eye } from 'lucide-vue-next';
+import { Box,Search,Layers,Building2,Car,Users,Activity,Sun,Moon,Maximize2,RotateCcw,MapPin,ChevronRight,Play,Pause,SkipBack,AlertTriangle,X,Check,Clock3,Navigation,LocateFixed,Info,TreePine,Route,PanelLeftClose,PanelLeftOpen,PanelRightClose,PanelRightOpen,Radio,ArrowUpRight,Zap,ParkingCircle,CheckCheck,Eye,Volume2,VolumeX } from 'lucide-vue-next';
 import campus from '../public/data/campus.json' with {type:'json'};
 import provenance from '../public/data/osm-provenance.json';
 import { createScene,type Layer } from './scene';
+import { sampleTour,TOUR_DURATION,TOUR_LEAD_IN } from './tour';
 import { activeAlerts,advanceTime,createAlert,DURATION,sampleWorld,recordAlertAction,PEOPLE_COUNT,ACTOR_CAR_COUNT,type AlertRecord } from './simulation';
 const host=ref<HTMLElement>();let viewer:ReturnType<typeof createScene>|undefined;
 type ThemeMode='auto'|'day'|'night';
 const wide=ref(!matchMedia('(max-width: 620px)').matches);
 const ready=ref(false),error=ref(''),fps=ref(0),query=ref(''),category=ref('all'),selected=ref(''),tab=ref('overview'),themeMode=ref<ThemeMode>('auto'),night=ref(false),showSources=ref(false),sidebar=ref(wide.value),rightbar=ref(wide.value);
 const playing=ref(!matchMedia('(prefers-reduced-motion: reduce)').matches),time=ref(120),speed=ref(1);let clock=120,raf=0,last=0,published=0;
+const tourActive=ref(false),tourPlaying=ref(false),tourTime=ref(0),bgmEnabled=ref(true);
+let tourClock=0;let tourPanels:{sidebar:boolean;rightbar:boolean}|undefined;
+const tourChapter=computed(()=>sampleTour(tourTime.value-TOUR_LEAD_IN).title);
+const tourProgress=computed(()=>Math.min(100,Math.round(tourTime.value/TOUR_DURATION*100)));
 const layers=ref<Record<Layer,boolean>>({trees:true,people:true,cars:true,labels:true,routes:false,osm:false});
 const layerOptions:{key:Layer;label:string;icon:typeof TreePine}[]=[{key:'trees',label:'绿化树木',icon:TreePine},{key:'people',label:'模拟行人',icon:Users},{key:'cars',label:'模拟车辆',icon:Car},{key:'labels',label:'楼宇标注',icon:MapPin},{key:'routes',label:'行驶轨迹',icon:Route},{key:'osm',label:'OSM 轮廓',icon:Layers}];
 const alerts=ref<AlertRecord[]>([createAlert('international',35,0),createAlert('equipment',85,1)]);
@@ -22,9 +27,12 @@ const filtered=computed(()=>campus.buildings.filter(b=>(category.value==='all'||
 const occupancy=computed(()=>Math.round(snapshot.value.parked/campus.parking.length*100));
 const timeText=(t:number)=>`09:${String(Math.floor(t/60)).padStart(2,'0')}:${String(Math.floor(t%60)).padStart(2,'0')}`;
 const viewMode=ref('overview');
-const selectedLabel=computed(()=>building.value?.name||({trees:'梧桐树行道',top:'俯视园区',south:'南侧办公区'} as Record<string,string>)[viewMode.value]||'全园区视角');
-function focus(id:string){selected.value=id;viewMode.value='building';viewer?.select(id);}
-function view(name='overview'){selected.value='';viewMode.value=name;viewer?.view(name);}
+const selectedLabel=computed(()=>building.value?.name||({trees:'梧桐树行道',top:'俯视园区',south:'南侧办公区',tour:'三维场景巡游',free:'自由视角'} as Record<string,string>)[viewMode.value]||'全园区视角');
+function focus(id:string){if(tourActive.value)stopTour();selected.value=id;viewMode.value='building';viewer?.select(id);}
+function view(name='overview'){if(tourActive.value)stopTour();selected.value='';viewMode.value=name;viewer?.view(name);}
+function startTour(){if(!ready.value||!viewer)return;tourPanels={sidebar:sidebar.value,rightbar:rightbar.value};sidebar.value=false;rightbar.value=false;selected.value='';viewMode.value='tour';tourClock=0;tourTime.value=0;tourActive.value=true;tourPlaying.value=true;viewer.beginTour();viewer.tourAt(0);}
+function toggleTour(){if(!tourActive.value){startTour();return;}if(tourClock>=TOUR_DURATION){stopTour();startTour();return;}tourPlaying.value=!tourPlaying.value;}
+function stopTour(){if(!tourActive.value)return;tourActive.value=false;tourPlaying.value=false;viewer?.stopTour();viewMode.value='free';if(tourPanels){sidebar.value=tourPanels.sidebar;rightbar.value=tourPanels.rightbar;tourPanels=undefined;}}
 function seek(value:number){clock=Math.max(0,Math.min(DURATION,value));time.value=clock;viewer?.update(clock);}
 function setTab(name:string){tab.value=name;if(name==='traffic'){layers.value.routes=true;viewer?.setLayer('routes',true);}else if(name==='overview'){layers.value.routes=false;viewer?.setLayer('routes',false);}}
 function toggleLayer(key:Layer){layers.value[key]=!layers.value[key];viewer?.setLayer(key,layers.value[key]);}
@@ -41,10 +49,10 @@ function applyThemeMode(){night.value=themeMode.value==='auto'?nightFromClock():
 function setThemeMode(mode:ThemeMode){themeMode.value=mode;applyThemeMode();}
 function toggleNightManual(){setThemeMode(night.value?'day':'night');}
 function setManual(){if(themeMode.value==='auto')setThemeMode(night.value?'night':'day');else toggleNightManual();}
-async function load(){error.value='';ready.value=false;viewer?.destroy();if(!host.value)return;try{viewer=createScene(host.value,focus,v=>fps.value=v,e=>error.value=e);await viewer.ready;ready.value=true;viewer.setNight(night.value);for(const [k,v]of Object.entries(layers.value))viewer.setLayer(k as Layer,v);viewer.update(clock);viewer.setAlert(openEvents.value[0]?.buildingId);}catch(e){error.value=error.value||`无法启动 WebGL 场景：${String(e)}`;}}
+async function load(){error.value='';ready.value=false;stopTour();viewer?.destroy();if(!host.value)return;try{viewer=createScene(host.value,focus,v=>fps.value=v,e=>error.value=e);await viewer.ready;ready.value=true;viewer.setNight(night.value);for(const [k,v]of Object.entries(layers.value))viewer.setLayer(k as Layer,v);viewer.update(clock);viewer.setAlert(openEvents.value[0]?.buildingId);}catch(e){error.value=error.value||`无法启动 WebGL 场景：${String(e)}`;}}
 watch(night,v=>{viewer?.setNight(v);document.documentElement.dataset.theme=v?'night':'day';});
 watch(openEvents,v=>viewer?.setAlert(v[0]?.buildingId),{deep:true});
-function animate(now:number){const dt=last?Math.min((now-last)/1000,.25):0;last=now;clock=advanceTime(clock,dt,playing.value&&ready.value,speed.value);viewer?.update(clock);if(now-published>180){time.value=clock;published=now;}if(clock>=DURATION)playing.value=false;raf=requestAnimationFrame(animate);}
+function animate(now:number){const dt=last?Math.min((now-last)/1000,.25):0;last=now;clock=advanceTime(clock,dt,playing.value&&ready.value,speed.value);viewer?.update(clock);if(tourActive.value&&tourPlaying.value){tourClock=Math.min(TOUR_DURATION,tourClock+dt);viewer?.tourAt(tourClock);if(tourClock>=TOUR_DURATION)tourPlaying.value=false;}if(now-published>180){time.value=clock;tourTime.value=tourClock;published=now;}if(clock>=DURATION)playing.value=false;raf=requestAnimationFrame(animate);}
 function onKey(e:KeyboardEvent){if(e.key==='Escape')showSources.value=false;}
 let themeTimer=0;
 onMounted(()=>{applyThemeMode();load();raf=requestAnimationFrame(animate);window.addEventListener('keydown',onKey);themeTimer=window.setInterval(()=>{if(themeMode.value==='auto')applyThemeMode();},60_000);});
@@ -71,9 +79,19 @@ function fullscreen(){if(document.fullscreenElement)document.exitFullscreen().ca
         <button class="source-card" @click="showSources=true"><span class="source-symbol"><Layers :size="18"/></span><span><strong>空间数据来源</strong><small>OpenStreetMap · 2026.09.20</small></span><ArrowUpRight :size="15"/></button>
       </aside>
 
-      <section class="scene-section" aria-label="三维园区场景">
+      <section class="scene-section" :class="{'tour-active':tourActive}" aria-label="三维园区场景">
         <div class="scene-canvas" ref="host"></div>
         <div class="scene-top"><div class="view-badge"><button v-if="!sidebar" class="icon-button" aria-label="展开资产面板" @click="sidebar=true"><PanelLeftOpen :size="17"/></button><span class="tiny-square"/>{{selectedLabel}}<span class="view-tag">3D</span></div><div class="theme-controls"><button v-if="!rightbar" class="icon-button theme-reopen" aria-label="展开运行概览" title="展开运行概览" @click="rightbar=true"><PanelRightOpen :size="17"/></button><div class="weather"><component :is="night?Moon:Sun" :size="17"/><span>{{night?'夜间场景':'日间场景'}} · {{themeMode==='auto'?'自动':'手动'}}</span></div><div class="theme-switch" role="group" aria-label="页面风格切换"><button type="button" :class="{active:themeMode==='day'}" @click="setThemeMode('day')">日间</button><button type="button" :class="{active:themeMode==='night'}" @click="setThemeMode('night')">夜间</button><button type="button" :class="{active:themeMode!=='auto'}" @click="setManual">手动</button><button type="button" :class="{active:themeMode==='auto'}" @click="setThemeMode('auto')">自动</button></div></div></div>
+        <div class="tour-controls" aria-label="三维场景巡游控制">
+          <button class="tour-play" :disabled="!ready" :aria-label="tourPlaying?'暂停三维巡游':tourActive?'继续三维巡游':'播放三维巡游'" @click="toggleTour"><component :is="tourPlaying?Pause:Play" :size="17" :fill="tourPlaying?'none':'currentColor'"/><span>{{tourPlaying?'暂停巡游':tourActive&&tourClock>=TOUR_DURATION?'重播巡游':tourActive?'继续巡游':'播放三维巡游'}}</span></button>
+          <div v-if="tourActive" class="tour-progress"><div><strong>{{tourChapter}}</strong><span>{{tourProgress}}%</span></div><div class="tour-progress-track"><span :style="{width:tourProgress+'%'}"/></div><button class="tour-exit" @click="stopTour">结束巡游</button></div>
+        </div>
+        <div v-if="tourActive" class="tour-music" aria-label="巡游背景音乐">
+          <div class="tour-music-head"><span><component :is="bgmEnabled?Volume2:VolumeX" :size="14"/>BGM · B 站原视频</span><button @click="bgmEnabled=!bgmEnabled" :aria-label="bgmEnabled?'关闭背景音乐':'开启背景音乐'">{{bgmEnabled?'关闭':'开启'}}</button></div>
+          <iframe v-if="tourPlaying&&bgmEnabled" src="https://player.bilibili.com/player.html?bvid=BV1jLA8zvEiA&autoplay=1&danmaku=0" title="未来高科技城市氛围音乐 · B 站播放器" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+          <p v-else>{{bgmEnabled?'巡游暂停，音乐已停止；继续后将重新加载。':'背景音乐已关闭。'}}</p>
+          <div class="tour-music-foot"><span>若未自动播放，请点击视频内播放键</span><a href="https://www.bilibili.com/video/BV1jLA8zvEiA/" target="_blank" rel="noopener noreferrer">原视频 ↗</a></div>
+        </div>
         <div v-if="!ready&&!error" class="loading-overlay"><span class="loader"/><strong>正在构建园区视野</strong><span>加载 Blender 模型与场景资产</span></div>
         <div v-if="error" class="error-overlay"><AlertTriangle/><strong>场景暂不可用</strong><p>{{error}}</p><button class="primary-button" @click="load">重新加载</button></div>
         <div class="scene-tools"><button class="tool-button" @click="view()" aria-label="恢复全园区视角" title="全园区"><RotateCcw :size="18"/></button><button class="tool-button" @click="view('top')" aria-label="俯视园区" title="俯视"><Layers :size="18"/></button><button class="tool-button" @click="view('south')" aria-label="查看南侧办公区" title="南侧办公区"><Building2 :size="18"/></button><button class="tool-button" @click="view('trees')" aria-label="查看梧桐树行道" title="梧桐树行道"><TreePine :size="18"/></button><span/><button class="tool-button" @click="toggleNightManual" :aria-label="night?'切换日间':'切换夜间'" :title="night?'切换日间':'切换夜间'"><component :is="night?Sun:Moon" :size="18"/></button><button class="tool-button" @click="fullscreen" aria-label="切换全屏" title="全屏"><Maximize2 :size="18"/></button></div>

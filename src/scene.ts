@@ -6,6 +6,7 @@ import campus from '../public/data/campus.json' with {type:'json'};
 import { findBuildingId } from './picking';
 import { sampleWorld,vehicleRoutes,ACTOR_CAR_COUNT } from './simulation';
 import { applySceneCorrections } from './scene-corrections';
+import { sampleTour,TOUR_LEAD_IN } from './tour';
 export type Building=typeof campus.buildings[number];
 export type Layer='trees'|'people'|'cars'|'labels'|'routes'|'osm';
 export function createScene(host:HTMLElement,onSelect:(id:string)=>void,onStats:(fps:number)=>void,onError:(message:string)=>void){
@@ -76,6 +77,16 @@ export function createScene(host:HTMLElement,onSelect:(id:string)=>void,onStats:
     update(0);
   }).catch(e=>{if(!disposed)onError('三维资产加载失败。请检查 public/models 中的 GLB 文件后重试。'+String(e));throw e;});
   let time=0;let alarmId:string|undefined;let chosen:string|undefined;let tween:{from:THREE.Vector3;to:THREE.Vector3;targetFrom:THREE.Vector3;targetTo:THREE.Vector3;start:number}|undefined;
+  let tourActive=false;let tourEntry:{position:THREE.Vector3;target:THREE.Vector3}|undefined;
+  function beginTour(){tween=undefined;tourEntry={position:camera.position.clone(),target:controls.target.clone()};tourActive=true;controls.enabled=false;}
+  function tourAt(seconds:number){
+    if(!tourActive)return;
+    const shot=sampleTour(seconds-TOUR_LEAD_IN);
+    const position=new THREE.Vector3(...shot.position),target=new THREE.Vector3(...shot.target);
+    if(seconds<TOUR_LEAD_IN&&tourEntry){const t=Math.max(0,seconds/TOUR_LEAD_IN);const eased=t*t*(3-2*t);position.lerpVectors(tourEntry.position,position,eased);target.lerpVectors(tourEntry.target,target,eased);}
+    camera.position.copy(position);controls.target.copy(target);camera.lookAt(target);camera.updateMatrixWorld();
+  }
+  function stopTour(){tourActive=false;tourEntry=undefined;controls.enabled=true;}
   function update(t:number){time=t;const world=sampleWorld(t);world.cars.forEach((a,i)=>{const o=carObjects[i];if(o){o.position.set(a.x,.33,a.z);o.rotation.y=a.angle;}});world.people.forEach((a,i)=>{const o=personObjects[i];if(!o)return;const bike=a.mode==='bike'||a.mode==='ebike';o.position.set(a.x,bike?.02:.28,a.z);o.rotation.y=a.angle;if(bike)return;const phase=Math.sin(a.phase*6)*.08;o.position.y+=Math.abs(phase)*.25;for(const name of ['LeftLeg','RightLeg','LeftArm','RightArm']){const limb=o.getObjectByName(name);if(limb)limb.rotation.x=phase*5*((name==='LeftLeg'||name==='RightArm')?1:-1);}});}
   function move(to:THREE.Vector3,target:THREE.Vector3){tween={from:camera.position.clone(),to,targetFrom:controls.target.clone(),targetTo:target,start:performance.now()};}
   function select(id:string){const b=campus.buildings.find(x=>x.id===id);if(!b)return;chosen=id;selectLine.geometry.dispose();selectLine.geometry=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(b.x-b.w/2-3,.7,b.z-b.d/2-3),new THREE.Vector3(b.x+b.w/2+3,.7,b.z-b.d/2-3),new THREE.Vector3(b.x+b.w/2+3,.7,b.z+b.d/2+3),new THREE.Vector3(b.x-b.w/2-3,.7,b.z+b.d/2+3)]);if(id==='factory-1')move(new THREE.Vector3(57,27,137),new THREE.Vector3(55,2,183));else move(new THREE.Vector3(b.x+120,145,b.z+185),new THREE.Vector3(b.x,b.height*.35,b.z));labels.forEach((el,key)=>el.classList.toggle('selected',key===id));}
@@ -92,10 +103,10 @@ export function createScene(host:HTMLElement,onSelect:(id:string)=>void,onStats:
   const resize=new ResizeObserver(()=>{const w=host.clientWidth,h=host.clientHeight;if(w&&h){renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();}});resize.observe(host);
   function place(el:HTMLElement,x:number,y:number,z:number){const p=new THREE.Vector3(x,y,z).project(camera);el.style.display=labelsVisible&&p.z<1&&p.z>-1?'':'none';el.style.left=`${(p.x*.5+.5)*host.clientWidth}px`;el.style.top=`${(-p.y*.5+.5)*host.clientHeight}px`;}
   let last=performance.now(),frames=0;let anim=0;
-  function frameLoop(now:number){if(disposed)return;anim=requestAnimationFrame(frameLoop);if(tween){const k=Math.min(1,(now-tween.start)/1050),ease=1-Math.pow(1-k,3);camera.position.lerpVectors(tween.from,tween.to,ease);controls.target.lerpVectors(tween.targetFrom,tween.targetTo,ease);if(k===1)tween=undefined;}controls.update();campus.buildings.filter(b=>labels.has(b.id)).forEach(b=>place(labels.get(b.id)!,b.x,b.height+8,b.z));roads.forEach((r,i)=>place(roadLabels[i],r[1],1,r[2]));alarmRing.visible=!!alarmId;if(alarmId){const b=campus.buildings.find(x=>x.id===alarmId);if(b){alarmRing.position.set(b.x,b.height+2,b.z);alarmRing.scale.setScalar(1+(time%2)*.3);}}
+  function frameLoop(now:number){if(disposed)return;anim=requestAnimationFrame(frameLoop);if(tween){const k=Math.min(1,(now-tween.start)/1050),ease=1-Math.pow(1-k,3);camera.position.lerpVectors(tween.from,tween.to,ease);controls.target.lerpVectors(tween.targetFrom,tween.targetTo,ease);if(k===1)tween=undefined;}if(!tourActive)controls.update();campus.buildings.filter(b=>labels.has(b.id)).forEach(b=>place(labels.get(b.id)!,b.x,b.height+8,b.z));roads.forEach((r,i)=>place(roadLabels[i],r[1],1,r[2]));alarmRing.visible=!!alarmId;if(alarmId){const b=campus.buildings.find(x=>x.id===alarmId);if(b){alarmRing.position.set(b.x,b.height+2,b.z);alarmRing.scale.setScalar(1+(time%2)*.3);}}
     renderer.render(scene,camera);frames++;if(now-last>1000){onStats(Math.round(frames*1000/(now-last)));last=now;frames=0;}}
   anim=requestAnimationFrame(frameLoop);
-  return {ready,update,select,setNight,setLayer,view,setAlert:(id?:string)=>{alarmId=id;},get selected(){return chosen;},get night(){return night;},destroy(){disposed=true;cancelAnimationFrame(anim);resize.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',onDown);renderer.domElement.removeEventListener('pointerup',onUp);renderer.domElement.removeEventListener('webglcontextlost',onContextLost);scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Line){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});trackedGeometries.forEach(g=>g.dispose());trackedMaterials.forEach(m=>m.dispose());env.dispose();renderer.dispose();host.replaceChildren();}};
+  return {ready,update,select,setNight,setLayer,view,beginTour,tourAt,stopTour,setAlert:(id?:string)=>{alarmId=id;},get selected(){return chosen;},get night(){return night;},destroy(){disposed=true;cancelAnimationFrame(anim);resize.disconnect();controls.dispose();renderer.domElement.removeEventListener('pointerdown',onDown);renderer.domElement.removeEventListener('pointerup',onUp);renderer.domElement.removeEventListener('webglcontextlost',onContextLost);scene.traverse(o=>{if(o instanceof THREE.Mesh||o instanceof THREE.Line){o.geometry.dispose();(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose());}});trackedGeometries.forEach(g=>g.dispose());trackedMaterials.forEach(m=>m.dispose());env.dispose();renderer.dispose();host.replaceChildren();}};
 }
 
 
